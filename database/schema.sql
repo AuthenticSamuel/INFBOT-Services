@@ -7,21 +7,15 @@ USE infbotutilities;
 
 CREATE TABLE IF NOT EXISTS guilds (
     guildId VARCHAR(32) PRIMARY KEY NOT NULL,
-    guildOwner VARCHAR(32) NOT NULL
-);
-
-CREATE TABLE IF NOT EXISTS guildconfig (
-    id INT PRIMARY KEY AUTO_INCREMENT,
-    guildId VARCHAR(32) NOT NULL,
-    guildLocalPrefix VARCHAR(16) DEFAULT "infu/"
+    welcomeChannelId VARCHAR(32) NOT NULL DEFAULT "None",
+    boostChannelId VARCHAR(32) NOT NULL DEFAULT "None",
+    auditChannelId VARCHAR(32) NOT NULL DEFAULT "None",
 );
 
 -- DELETE TABLES
 
 DROP TABLE guilds;
-DROP TABLE guildconfig;
 
 -- DESCRIBE TABLES
 
 DESCRIBE guilds;
-DESCRIBE guildconfig;

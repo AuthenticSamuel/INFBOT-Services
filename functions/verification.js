@@ -36,5 +36,6 @@ module.exports = {
             console.log(`${colors.brightBlue(`${getDateTime()} >>>   `)}${file}`);
         };
 
-    }
-}
+    },
+
+};
