@@ -1,0 +1,23 @@
+{
+    "VERSION": {
+        "INFBOT": "1.0.0",
+        "NODEJS": "16.6.2",
+        "DISCORDJS": "13.2.0"
+    },
+    "PREFIX": {
+        "GLOBAL": "infbotu/",
+        "LOCAL": "infu/"
+    },
+    "DELAY": {
+        "DELETE": 200,
+        "STATUS": 15000
+    },
+    "COLOR": {
+        "ERROR": "#990000",
+        "EVENT": "#0099FF",
+        "SUCCESS": "#009900",
+        "WARNING": "#FFCC00",
+        "NITRO": "F47FFF"
+    },
+    "guildId": 328486960664412160
+}
