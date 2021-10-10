@@ -1,8 +1,6 @@
-const { Permissions } = require("discord.js");
-
 module.exports = async (oldChannel, newChannel, client) => {
     
-    console.log(newChannel.permissionOverwrites.cache);
+    console.log(newChannel);
 
     // Rename channel
     if (oldChannel.name !== newChannel.name) {
@@ -32,7 +30,7 @@ module.exports = async (oldChannel, newChannel, client) => {
         try {
             
             let auditChannel = newChannel.guild.channels.cache.get(auditChannelId);
-            await auditChannel.send("`" + `Updated channel '${newChannel.name}' slowmode: '${oldChannel.rateLimitPerUser}s' -> '${newChannel.rateLimitPerUser}s' (ID: ${newChannel.id})` + "`");
+            await auditChannel.send("`" + `Updated channel '${newChannel.name}' (ID: ${newChannel.id}) slowmode: '${oldChannel.rateLimitPerUser}s' -> '${newChannel.rateLimitPerUser}s'` + "`");
     
         } catch (error) {
     
@@ -82,6 +80,31 @@ module.exports = async (oldChannel, newChannel, client) => {
 
             };
     
+        } catch (error) {
+    
+            console.error(error);
+    
+        };
+
+    };
+
+    // Voice and stage channels
+    if (newChannel.type === "GUILD_VOICE" || newChannel.type === "GUILD_STAGE_VOICE") {
+
+        let auditChannelId = client.guildConfig.get(newChannel.guild.id)[2];
+        if (auditChannelId === "None") return;
+
+        try {
+            
+            let auditChannel = newChannel.guild.channels.cache.get(auditChannelId);
+
+            // Bitrate
+            if (oldChannel.bitrate !== newChannel.bitrate) await auditChannel.send("`" + `Updated channel '${newChannel.name}' (ID: ${newChannel.id}) bitrate: '${Math.round(oldChannel.bitrate / 1000)} kbps' -> '${Math.round(newChannel.bitrate / 1000)} kbps'` + "`");
+            // User limit
+            if (newChannel.type !== "GUILD_STAGE_VOICE" && oldChannel.userLimit !== newChannel.userLimit) await auditChannel.send("`" + `Updated channel '${newChannel.name}' (ID: ${newChannel.id}) user limit: '${oldChannel.userLimit}' -> '${newChannel.userLimit}'` + "`");
+            // RTC Region
+            if (oldChannel.rtcRegion !== newChannel.rtcRegion) await auditChannel.send("`" + `Updated channel '${newChannel.name}' (ID: ${newChannel.id}) RTC region: '${oldChannel.rtcRegion ? oldChannel.rtcRegion : "auto"}' -> '${newChannel.rtcRegion ? newChannel.rtcRegion : "auto"}'` + "`")
+
         } catch (error) {
     
             console.error(error);
