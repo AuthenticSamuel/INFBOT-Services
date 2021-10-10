@@ -10,6 +10,9 @@ const client = new Client({
 		Intents.FLAGS.GUILDS,
 		Intents.FLAGS.GUILD_MEMBERS	
 	],
+	// partials: [
+	// 	"GUILD_MEMBER"
+	// ] // caching members on ready instead of using partials atm
 });
 
 // File verification
@@ -25,6 +28,9 @@ client.on("interactionCreate", interaction => require("./events/interactionCreat
 client.on("guildMemberAdd", (member) => require("./events/guildMemberAdd")(member, client));
 client.on("guildMemberRemove", (member) => require("./events/guildMemberRemove")(member, client));
 client.on("guildMemberUpdate", (oldMember, newMember) => require("./events/guildMemberUpdate")(oldMember, newMember, client));
+client.on("channelCreate", (channel) => require("./events/channelCreate")(channel, client));
+client.on("channelDelete", (channel) => require("./events/channelDelete")(channel, client));
+client.on("channelUpdate", (oldChannel, newChannel) => require("./events/channelUpdate")(oldChannel, newChannel, client));
 
 // Login + DB
 (async () => {

@@ -205,10 +205,8 @@ module.exports = {
 
 function updateConfig(interaction, index, value) {
 
-    console.log(interaction.client.guildConfig)
     let guildConfigArr = interaction.client.guildConfig.get(interaction.guild.id);
     guildConfigArr[index] = value.toString();
     interaction.client.guildConfig.set(interaction.guild.id, guildConfigArr);
-    console.log(interaction.client.guildConfig)
 
 };

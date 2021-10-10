@@ -5,6 +5,7 @@ module.exports = async (member, client) => {
 
 	let welcomeChannelId = client.guildConfig.get(member.guild.id)[0];
 	if (welcomeChannelId === "None") return;
+	
 	try {
 
 		let welcomeChannel = member.guild.channels.cache.get(welcomeChannelId);

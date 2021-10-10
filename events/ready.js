@@ -16,6 +16,7 @@ module.exports = async (client) => {
 
         if (guild.memberCount != NaN) totalMembers += guild.memberCount;
         allGuildInfo.push(new Server(guild.id, guild.name, guild.memberCount));
+        guild.members.fetch();
 
     });
 

@@ -8,13 +8,15 @@ module.exports = async (oldMember, newMember, client) => {
 
         let boostChannelId = client.guildConfig.get(newMember.guild.id)[1];
         if (boostChannelId === "None") return;
+        
         try {
 
             let boostChannel = newMember.guild.channels.cache.get(boostChannelId);
             let embed = new MessageEmbed()
                 .setColor(config.COLOR.NITRO)
                 .setThumbnail(newMember.user.avatarURL())
-                .setTitle(`<@${newMember.id}> just boosted the server!`);
+                .setTitle(`${newMember.guild.name} just got boosted!`)
+                .setDescription(`<@${newMember.id}> just boosted the server! **${newMember.guild.name}** thanks you for your support!`);
             await boostChannel.send({ embeds: [embed] });
 
         } catch (error) {
@@ -65,7 +67,24 @@ module.exports = async (oldMember, newMember, client) => {
 
         };
 
-        // Nickname change
+    };
+
+    // Nickname update
+    if (oldMember.nickname !== newMember.nickname) {
+
+        let auditChannelId = client.guildConfig.get(newMember.guild.id)[2];
+        if (auditChannelId === "None") return;
+
+        try {
+
+            let auditChannel = newMember.guild.channels.cache.get(auditChannelId);
+            return await auditChannel.send("`" + `'${newMember.user.username}' (ID: ${newMember.user.id}) has updated their nickname: '${oldMember.nickname ? oldMember.nickname : "None"}' -> '${newMember.nickname ? newMember.nickname : "None"}'` + "`");
+
+        } catch (error) {
+
+            console.error(error);
+
+        };
 
     };
 
