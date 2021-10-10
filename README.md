@@ -1,4 +1,4 @@
-<h1 align="center">▶ INFBOT Utilities V1.0.0 ◀</h1>
+<h1 align="center">▶ INFBOT Utilities V1.0.1 ◀</h1>
 <h2 align="center">🛠 Still in development 🛠</h2><br>
 
 <div>
