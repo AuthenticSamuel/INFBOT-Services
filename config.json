@@ -19,5 +19,12 @@
         "WARNING": "#FFCC00",
         "NITRO": "F47FFF"
     },
-    "guildId": 328486960664412160
+    "guildId": 328486960664412160,
+    "PATCH": {
+        "DATE": "temp data",
+        "NOTES": "temp data"
+    },
+    "CODE": "https://github.com/INF-Zenyth/INFBOT-Utilities",
+    "DEVELOPER_DISCORD_SERVER": "https://discord.gg/jwEp6VX",
+    "SUPPORT_DISCORD_SERVER": "https://discord.gg/jwEp6VX"
 }
