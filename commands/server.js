@@ -22,7 +22,7 @@ module.exports = {
             .addFields(
                 { name: "Members:", value: `${guild.memberCount}` },
                 { name: "Created:", value: `${formatFullDate(guild.createdAt)}` },
-                { name: "Owner:", value: `${guildOwner.user.username} (ID: ${guildOwner.user.id})` })
+                { name: "Owner:", value: `${guildOwner.user.tag} (ID: ${guildOwner.user.id})` })
             if (guild.premiumSubscriptionCount !== null) embed.addField("Nitro boosts:", `${guild.premiumSubscriptionCount} boosts`);
 
         await interaction.reply({ embeds: [embed] });

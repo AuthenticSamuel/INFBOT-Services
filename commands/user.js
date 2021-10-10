@@ -23,7 +23,7 @@ module.exports = {
             .setThumbnail(user.avatarURL())
             .setTitle("User Information:")
             .setDescription("Here's some information about this user")
-            .addField("Username:", `${user.username}#${user.discriminator}`);
+            .addField("Username:", `${user.tag}`);
         if (member.nickname !== null) embed.addField("Nickname: ", `${member.nickname}`);
         embed.addFields(
             { name: "ID:", value: `${user.id}` },
