@@ -34,7 +34,6 @@ client.on("channelDelete", (channel) => require("./events/channelDelete")(channe
 client.on("channelUpdate", (oldChannel, newChannel) => require("./events/channelUpdate")(oldChannel, newChannel, client));
 client.on("guildBanAdd", (ban) => require("./events/guildBanAdd")(ban, client));
 client.on("guildBanRemove", (ban) => require("./events/guildBanRemove")(ban, client));
-client.on("error")
 
 // Login + DB
 (async () => {
