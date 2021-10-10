@@ -1,13 +1,4 @@
 {
-    "VERSION": {
-        "INFBOT": "1.0.0",
-        "NODEJS": "16.6.2",
-        "DISCORDJS": "13.2.0"
-    },
-    "PREFIX": {
-        "GLOBAL": "infbotu/",
-        "LOCAL": "infu/"
-    },
     "DELAY": {
         "DELETE": 200,
         "STATUS": 15000
@@ -21,8 +12,8 @@
     },
     "guildId": 328486960664412160,
     "PATCH": {
-        "DATE": "temp data",
-        "NOTES": "temp data"
+        "DATE": "temp text",
+        "NOTES": "temp text"
     },
     "CODE": "https://github.com/INF-Zenyth/INFBOT-Utilities",
     "DEVELOPER_DISCORD_SERVER": "https://discord.gg/jwEp6VX",

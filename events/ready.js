@@ -2,7 +2,8 @@ const colors = require("colors");
 const config = require("../config.json");
 const { REST } = require("@discordjs/rest");
 const { Routes } = require("discord-api-types/v9");
-const getDateTime = require("../functions/getDateTime")
+const getDateTime = require("../functions/getDateTime");
+const packageJSON = require("../package.json");
 
 module.exports = async (client) => {
 
@@ -71,7 +72,7 @@ module.exports = async (client) => {
 
     };
     
-    console.log(`${colors.cyan(`${getDateTime()} >>> INFBOT Utilities ${colors.white(config.VERSION.INFBOT)} Online • ${colors.white(client.guilds.cache.size)} guilds • ${colors.white(totalMembers)} members`)}`);
+    console.log(`${colors.cyan(`${getDateTime()} >>> INFBOT Utilities ${colors.white(packageJSON["version"])} Online • ${colors.white(client.guilds.cache.size)} guilds • ${colors.white(totalMembers)} members`)}`);
     console.table(allGuildInfo, ["Guild_ID", "Guild_Name", "Members"]);
 
     const status = [
