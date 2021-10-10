@@ -76,7 +76,7 @@ module.exports = async (oldChannel, newChannel, client) => {
                 newPO.forEach(async newRole => {
 
                     let oldRole = oldPO.get(newRole.id);
-                    if (oldRole.allow.bitfield !== newRole.allow.bitfield || oldRole.deny.bitfield !== newRole.deny.bitfield) await auditChannel.send("`" + `Updated channel '${newChannel.name}' (ID: ${newChannel.id}): role '${newChannel.guild.roles.cache.get(newRole.id).name}' (ID: ${newRole.id}) allow -> '${newRole.allow.bitfield}' | deny -> '${newRole.deny.bitfield}'` + "`");
+                    if (oldRole.allow.bitfield !== newRole.allow.bitfield || oldRole.deny.bitfield !== newRole.deny.bitfield) await auditChannel.send("`" + `Updated channel '${newChannel.name}' (ID: ${newChannel.id}): updated role '${newChannel.guild.roles.cache.get(newRole.id).name}' (ID: ${newRole.id}) allow -> '${newRole.allow.bitfield}' | deny -> '${newRole.deny.bitfield}'` + "`");
 
                 });
 
