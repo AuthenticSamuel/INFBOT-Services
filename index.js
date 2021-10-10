@@ -8,7 +8,8 @@ const verification = require("./functions/verification");
 const client = new Client({
 	intents: [
 		Intents.FLAGS.GUILDS,
-		Intents.FLAGS.GUILD_MEMBERS	
+		Intents.FLAGS.GUILD_MEMBERS,
+		Intents.FLAGS.GUILD_BANS,
 	],
 	// partials: [
 	// 	"GUILD_MEMBER"
@@ -31,6 +32,9 @@ client.on("guildMemberUpdate", (oldMember, newMember) => require("./events/guild
 client.on("channelCreate", (channel) => require("./events/channelCreate")(channel, client));
 client.on("channelDelete", (channel) => require("./events/channelDelete")(channel, client));
 client.on("channelUpdate", (oldChannel, newChannel) => require("./events/channelUpdate")(oldChannel, newChannel, client));
+client.on("guildBanAdd", (ban) => require("./events/guildBanAdd")(ban, client));
+client.on("guildBanRemove", (ban) => require("./events/guildBanRemove")(ban, client));
+client.on("error")
 
 // Login + DB
 (async () => {
