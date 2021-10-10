@@ -1,7 +1,5 @@
 module.exports = async (oldChannel, newChannel, client) => {
     
-    console.log(newChannel);
-
     // Rename channel
     if (oldChannel.name !== newChannel.name) {
 
