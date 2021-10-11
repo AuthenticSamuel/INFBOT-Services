@@ -1,5 +1,6 @@
 const { MessageEmbed } = require("discord.js");
 const config = require("../config.json");
+const auditDate = require("../functions/auditDate");
 
 module.exports = async (member, client) => {
 
@@ -36,7 +37,7 @@ module.exports = async (member, client) => {
 
 			const { executor, target, reason } = kickLog;
 
-			if (target.id === member.user.id) await auditChannel.send("`" + `User kicked: '${member.user.tag}' (ID: ${member.user.id}) by '${executor.tag}' (ID: ${executor.id})${reason ? ". Reason: " + reason : ""}` + "`")
+			if (target.id === member.user.id) await auditChannel.send("`" + `${auditDate()} >>> User kicked: '${member.user.tag}' (ID: ${member.user.id}) by '${executor.tag}' (ID: ${executor.id})${reason ? ". Reason: " + reason : ""}` + "`")
 
 		};
 

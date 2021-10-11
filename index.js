@@ -38,6 +38,9 @@ client.on("emojiUpdate", (oldEmoji, newEmoji) => require("./events/emojiUpdate")
 client.on("stickerCreate", (sticker) => require("./events/stickerCreate")(sticker, client));
 client.on("stickerDelete", (sticker) => require("./events/stickerDelete")(sticker, client));
 client.on("stickerUpdate", (oldSticker, newSticker) => require("./events/stickerUpdate")(oldSticker, newSticker, client));
+client.on("roleCreate", (role) => require("./events/roleCreate")(role, client));
+client.on("roleDelete", (role) => require("./events/roleDelete")(role, client));
+client.on("roleUpdate", (oldRole, newRole) => require("./events/roleUpdate")(oldRole, newRole, client));
 client.on("rateLimit", (rateLimitData) => require("./events/rateLimit")(rateLimitData));
 
 // Login + DB

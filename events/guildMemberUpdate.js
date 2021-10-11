@@ -1,5 +1,6 @@
 const { MessageEmbed } = require("discord.js");
 const config = require("../config.json");
+const auditDate = require("../functions/auditDate");
 
 module.exports = async (oldMember, newMember, client) => {
 
@@ -37,7 +38,7 @@ module.exports = async (oldMember, newMember, client) => {
 
             let auditChannel = newMember.guild.channels.cache.get(auditChannelId);
             newMember.roles.cache.forEach(async role => {
-                if (!oldMember.roles.cache.has(role.id)) await auditChannel.send("`" + `Added role '${role.name}' (ID: ${role.id}) to '${newMember.user.tag}' (ID: ${newMember.user.id})` + "`");
+                if (!oldMember.roles.cache.has(role.id)) await auditChannel.send("`" + `${auditDate()} >>> Added role '${role.name}' (ID: ${role.id}) to '${newMember.user.tag}' (ID: ${newMember.user.id})` + "`");
             });
 
         } catch (error) {
@@ -58,7 +59,7 @@ module.exports = async (oldMember, newMember, client) => {
 
             let auditChannel = newMember.guild.channels.cache.get(auditChannelId);
             oldMember.roles.cache.forEach(async role => {
-                if (!newMember.roles.cache.has(role.id)) await auditChannel.send("`" + `Removed role '${role.name}' (ID: ${role.id}) from '${newMember.user.tag}' (ID: ${newMember.user.id})` + "`");
+                if (!newMember.roles.cache.has(role.id)) await auditChannel.send("`" + `${auditDate()} >>> Removed role '${role.name}' (ID: ${role.id}) from '${newMember.user.tag}' (ID: ${newMember.user.id})` + "`");
             });
 
         } catch (error) {
@@ -78,7 +79,7 @@ module.exports = async (oldMember, newMember, client) => {
         try {
 
             let auditChannel = newMember.guild.channels.cache.get(auditChannelId);
-            return await auditChannel.send("`" + `'${newMember.user.tag}' (ID: ${newMember.user.id}) has updated their nickname: '${oldMember.nickname ? oldMember.nickname : "None"}' -> '${newMember.nickname ? newMember.nickname : "None"}'` + "`");
+            return await auditChannel.send("`" + `${auditDate()} >>> '${newMember.user.tag}' (ID: ${newMember.user.id}) has updated their nickname: '${oldMember.nickname ? oldMember.nickname : "None"}' -> '${newMember.nickname ? newMember.nickname : "None"}'` + "`");
 
         } catch (error) {
 

@@ -1,3 +1,5 @@
+const auditDate = require("../functions/auditDate");
+
 module.exports = async (channel, client) => {
 
 	let auditChannelId = client.guildConfig.get(channel.guild.id)[2];
@@ -21,7 +23,7 @@ module.exports = async (channel, client) => {
 
         };
 
-        await auditChannel.send("`" + `Added ${channelType} '${channel.name}' (ID: ${channel.id})${parent ? ` in category '${parent.name}' (ID: ${parent.id})` : ""}` + "`");
+        await auditChannel.send("`" + `${auditDate()} >>> Added ${channelType} '${channel.name}' (ID: ${channel.id})${parent ? ` in category '${parent.name}' (ID: ${parent.id})` : ""}` + "`");
 
     } catch (error) {
 

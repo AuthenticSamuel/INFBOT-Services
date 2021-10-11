@@ -1,3 +1,5 @@
+const auditDate = require("../functions/auditDate");
+
 module.exports = async (oldEmoji, newEmoji, client) => {
 
     if (oldEmoji.name !== newEmoji.name) {
@@ -8,7 +10,7 @@ module.exports = async (oldEmoji, newEmoji, client) => {
         try {
     
             let auditChannel = newEmoji.guild.channels.cache.get(auditChannelId);
-            await auditChannel.send("`" + `Updated emoji: '${oldEmoji.name}' -> '${newEmoji.name}' (ID: ${newEmoji.id})` + "`");
+            await auditChannel.send("`" + `${auditDate()} >>> Updated emoji: '${oldEmoji.name}' -> '${newEmoji.name}' (ID: ${newEmoji.id})` + "`");
     
         } catch (error) {
     

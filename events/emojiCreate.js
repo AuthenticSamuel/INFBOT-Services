@@ -1,3 +1,5 @@
+const auditDate = require("../functions/auditDate");
+
 module.exports = async (emoji, client) => {
 
     let auditChannelId = client.guildConfig.get(emoji.guild.id)[2];
@@ -6,7 +8,7 @@ module.exports = async (emoji, client) => {
     try {
 
         let auditChannel = emoji.guild.channels.cache.get(auditChannelId);
-        await auditChannel.send("`" + `Added ${emoji.animated ? "an animated " : ""}emoji '${emoji.name}' (ID: ${emoji.id}) ->` + "`" + `<:${emoji.name}:${emoji.id}>`);
+        await auditChannel.send("`" + `${auditDate()} >>> Added ${emoji.animated ? "an animated " : ""}emoji '${emoji.name}' (ID: ${emoji.id}) ->` + "`" + `<:${emoji.name}:${emoji.id}>`);
 
     } catch (error) {
 

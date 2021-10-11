@@ -1,3 +1,5 @@
+const auditDate = require("../functions/auditDate");
+
 module.exports = async (sticker, client) => {
 
     let auditChannelId = client.guildConfig.get(sticker.guild.id)[2];
@@ -6,7 +8,7 @@ module.exports = async (sticker, client) => {
     try {
 
         let auditChannel = sticker.guild.channels.cache.get(auditChannelId);
-        await auditChannel.send("`" + `Removed sticker '${sticker.name}' (ID: ${sticker.id})` + "`");
+        await auditChannel.send("`" + `${auditDate()} >>> Removed sticker '${sticker.name}' (ID: ${sticker.id})` + "`");
 
     } catch (error) {
 
