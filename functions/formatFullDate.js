@@ -1,4 +1,4 @@
-module.exports = function (date) {
+module.exports = (date) => {
 
     let options = {
         year: "numeric",

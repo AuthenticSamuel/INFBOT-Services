@@ -10,14 +10,29 @@ const client = new Client({
 		Intents.FLAGS.GUILDS,
 		Intents.FLAGS.GUILD_MEMBERS,
 		Intents.FLAGS.GUILD_BANS,
+		Intents.FLAGS.GUILD_MESSAGES,
 		Intents.FLAGS.GUILD_EMOJIS_AND_STICKERS,
+		Intents.FLAGS.GUILD_MESSAGE_REACTIONS,
 	],
 });
+let connection;
 
 // File verification
 verification.commands(client);
 verification.events();
 verification.functions();
+
+// Login + DB
+(async () => {
+
+	connection = await require("./database/db");
+	client.connection = connection;
+	client.guildConfig = new Collection();
+	client.login(process.env.DISCORD_AUTH_TOKEN).catch(error => {
+		console.log(`${colors.red(`\n\n\n${getDateTime()} >>> Couldn't log into Discord. Please check your token in the .env file.`)}\n${error}`);
+	});
+
+})();
 
 // Events
 client.on("ready", () => require("./events/ready")(client));
@@ -41,16 +56,5 @@ client.on("stickerUpdate", (oldSticker, newSticker) => require("./events/sticker
 client.on("roleCreate", (role) => require("./events/roleCreate")(role, client));
 client.on("roleDelete", (role) => require("./events/roleDelete")(role, client));
 client.on("roleUpdate", (oldRole, newRole) => require("./events/roleUpdate")(oldRole, newRole, client));
-client.on("rateLimit", (rateLimitData) => require("./events/rateLimit")(rateLimitData));
+//client.on("rateLimit", (rateLimitData) => require("./events/rateLimit")(rateLimitData));
 
-// Login + DB
-(async () => {
-
-	connection = await require("./database/db");
-	client.connection = connection;
-	client.guildConfig = new Collection();
-	client.login(process.env.DISCORD_AUTH_TOKEN).catch(error => {
-		console.log(`${colors.red(`\n\n\n${getDateTime()} >>> Couldn't log into Discord. Please check your token in the .env file.`)}\n${error}`);
-	});
-
-})();

@@ -32,7 +32,6 @@ module.exports = {
                 .addChoice("Members (Join/Leave)", "mlc")       // REMOVE/mlc
                 .addChoice("Nitro Boosts", "nbc")               // REMOVE/nbc
                 .addChoice("Audit Log", "alc")))                // REMOVE/alc
-        
 
     , async execute(interaction) {
 

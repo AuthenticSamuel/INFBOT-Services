@@ -1,7 +1,7 @@
 const colors = require("colors");
 const getDateTime = require("./getDateTime");
 
-module.exports = function(command, result = "") {
+module.exports = (command, result = "") => {
     
     if (result.startsWith("SUCCESS")) result = `[${colors.green(result)}]`;
     else if (result.startsWith("ERROR")) result = `[${colors.red(result)}]`;

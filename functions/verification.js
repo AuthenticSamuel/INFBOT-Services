@@ -4,7 +4,7 @@ const fs = require("fs");
 const { Collection } = require("discord.js");
 
 module.exports = {
-    commands: function (client) {
+    commands: (client) => {
 
         const commandFiles = fs.readdirSync("./commands").filter(file => file.endsWith(".js"));
         const commands = [];
@@ -19,7 +19,7 @@ module.exports = {
         client.commandsArray = commands;
 
     },
-    events: function () {
+    events: () => {
 
         console.log(colors.brightBlue(`${getDateTime()} >>> Events:`));
         const eventFiles = fs.readdirSync("./events").filter(file => file.endsWith(".js"));
@@ -28,7 +28,7 @@ module.exports = {
         };
 
     },
-    functions: function () {
+    functions: () => {
 
         console.log(colors.brightBlue(`${getDateTime()} >>> Functions:`));
         const functionFiles = fs.readdirSync("./functions").filter(file => file.endsWith(".js"));

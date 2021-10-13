@@ -1,4 +1,4 @@
-module.exports = function(value) {
+module.exports = (value) => {
 
     let valueString = value + "";
     if (valueString.length < 2) return "0" + valueString;
