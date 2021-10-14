@@ -18,6 +18,12 @@ module.exports = async (client) => {
         allGuildInfo.push(new Server(guild.id, guild.name, guild.memberCount));
         guild.members.fetch();
 
+        /*connection.query(
+            `
+            INSERT INTO guilds (guildId) VALUES ('${guild.id}')
+            `
+        );*/
+
     });
 
     function Server(id, name, members) {

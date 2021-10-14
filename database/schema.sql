@@ -1,7 +1,7 @@
 -- CREATE DATABASE
 
-CREATE DATABASE IF NOT EXISTS infbotutilities;
-USE infbotutilities;
+CREATE DATABASE IF NOT EXISTS infbotutils;
+USE infbotutils;
 
 -- CREATE TABLES
 
@@ -23,7 +23,9 @@ CREATE TABLE IF NOT EXISTS reactionRoles (
 -- DELETE TABLES
 
 DROP TABLE guilds;
+DROP TABLE reactionRoles;
 
 -- DESCRIBE TABLES
 
 DESCRIBE guilds;
+DESCRIBE reactionRoles;
