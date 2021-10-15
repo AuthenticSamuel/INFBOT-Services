@@ -6,10 +6,10 @@ const logEvent = require("../functions/logEvent");
 module.exports = {
     
     data: new SlashCommandBuilder()
-        .setName("config")
+        .setName("integrations")
         .setDescription("Change INFBOT Utilties' settings")
         .addSubcommand(subcommand => subcommand
-            .setName("channel")
+            .setName("channelbased")
             .setDescription("Change channel settings")
             .addStringOption(option => option
                 .setName("type")
@@ -43,7 +43,7 @@ module.exports = {
                 .addChoice("Nitro Boosts", "nbc")               // REMOVE/nbc
                 .addChoice("Audit Log", "alc")                  // REMOVE/alc
                 .addChoice("Join Role", "jr")                   // REMOVE/jr
-                .addChoice("Automatic Voice Channels", "avc"))) // REMOVE/avc
+                .addChoice("Automatic Voice Channels", "ivc"))) // REMOVE/ivc
         
             
     , async execute(interaction) {
@@ -214,10 +214,10 @@ module.exports = {
 
             if (channelCreator !== "None" && channelCreatorCategory !== "None") {
 
-                let avcEmbed = new MessageEmbed()
+                let ivcEmbed = new MessageEmbed()
                     .setTitle("INFBOT Voice Channels are already setup on this server.")
                     .setColor(config.COLOR.WARNING);
-                interaction.reply({ embeds: [avcEmbed] });
+                interaction.reply({ embeds: [ivcEmbed] });
                 logEvent(csc, "WARN: ACTIVE");
                 return
 
@@ -271,11 +271,11 @@ module.exports = {
 
                     logEvent(csc, "SUCCESS");
 
-                    let avcEmbed = new MessageEmbed()
+                    let ivcEmbed = new MessageEmbed()
                         .setTitle("`Automatic Voice Channels` integration activated.")
                         .setDescription(`Enter the \`${config.AUTO_VC.CHANNEL_NAME}\` channel to get started.`)
                         .setColor(config.COLOR.EVENT);
-                    interaction.reply({ embeds: [avcEmbed] });
+                    interaction.reply({ embeds: [ivcEmbed] });
                     return;
 
                 } catch (error) {
@@ -306,13 +306,13 @@ module.exports = {
                 client.voiceConfig.set(guild.id, {
                     channelCreator: "None",
                     channelCreatorCategory: "None",
-                })
+                });
 
-                let avcEmbed = new MessageEmbed()
+                let ivcEmbed = new MessageEmbed()
                     .setTitle("I've found an issue with your setup...")
-                    .setDescription("It seems that INFBOT Voice Channels were partially setup on this server. This shouldn't happen. We've reset the setup process, therefore, please use `/config autovoicechannels` to re-initialize INFBOT Voice Channels.")
+                    .setDescription("It seems that INFBOT Voice Channels were partially setup on this server. This shouldn't happen. We've reset the setup process, therefore, please use `/integrations autovoicechannels` to re-initialize INFBOT Voice Channels.")
                     .setColor(config.COLOR.WARNING);
-                interaction.reply({ embeds: [avcEmbed] });
+                interaction.reply({ embeds: [ivcEmbed] });
                 logEvent(csc, "WARN: PARTIAL ACTIVE");
                 return;
 
@@ -403,7 +403,7 @@ module.exports = {
                 logEvent(`${command} ${subcommand}`, "SUCCESS: JR");
                 return;
             
-            } else if (type === "avc") {
+            } else if (type === "ivc") {
 
                 let channelCreator, channelCreatorCategory;
 
@@ -422,10 +422,10 @@ module.exports = {
 
                 if (channelCreator === "None" && channelCreatorCategory === "None") {
 
-                    let avcEmbed = new MessageEmbed()
+                    let ivcEmbed = new MessageEmbed()
                         .setTitle("INFBOT Voice Channels aren't running on this server.")
                         .setColor(config.COLOR.EVENT);
-                    interaction.reply({ embeds: [avcEmbed] });
+                    interaction.reply({ embeds: [ivcEmbed] });
                     return;
 
                 };
@@ -450,15 +450,15 @@ module.exports = {
                 client.voiceConfig.set(guild.id, {
                     channelCreator: "None",
                     channelCreatorCategory: "None",
-                })
+                });
 
                 if (guild.channels.cache.find((c) => c.id === channelCreator)) guild.channels.cache.get(channelCreator).delete();
                 if (guild.channels.cache.find((c) => c.id === channelCreatorCategory)) guild.channels.cache.get(channelCreatorCategory).delete();
                     
-                let avcEmbed = new MessageEmbed()
+                let ivcEmbed = new MessageEmbed()
                     .setTitle("`Auto Voice Channels` integration has been removed.")
                     .setColor(config.COLOR.EVENT);
-                interaction.reply({ embeds: [avcEmbed] });
+                interaction.reply({ embeds: [ivcEmbed] });
                 logEvent(csc, "SUCCESS");
                 return;
 
