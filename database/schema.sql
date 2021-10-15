@@ -1,7 +1,7 @@
 -- CREATE DATABASE
 
-CREATE DATABASE IF NOT EXISTS infbotutilities;
-USE infbotutilities;
+CREATE DATABASE IF NOT EXISTS infbotutils;
+USE infbotutils;
 
 -- CREATE TABLES
 
@@ -44,14 +44,20 @@ CREATE TABLE IF NOT EXISTS voiceChannels (
 
 DROP TABLE guilds;
 DROP TABLE reactionRoles;
+<<<<<<< HEAD
 DROP TABLE utils;
 DROP TABLE voice;
 DROP TABLE voiceChannels;
+=======
+>>>>>>> 0990b39621724cc2f15b11a800936468c6d11d8d
 
 -- DESCRIBE TABLES
 
 DESCRIBE guilds;
 DESCRIBE reactionRoles;
+<<<<<<< HEAD
 DESCRIBE utils;
 DESCRIBE voice;
 DESCRIBE voiceChannels;
+=======
+>>>>>>> 0990b39621724cc2f15b11a800936468c6d11d8d
