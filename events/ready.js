@@ -18,7 +18,6 @@ module.exports = async (client) => {
         allGuildInfo.push(new Server(guild.id, guild.name, guild.memberCount));
         guild.members.fetch();
 
-<<<<<<< HEAD
         // First start up only
 
         // try {
@@ -55,13 +54,6 @@ module.exports = async (client) => {
         // } catch {console.error};      
 
         // End of
-=======
-        /*connection.query(
-            `
-            INSERT INTO guilds (guildId) VALUES ('${guild.id}')
-            `
-        );*/
->>>>>>> 0990b39621724cc2f15b11a800936468c6d11d8d
 
     });
 
