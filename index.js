@@ -13,6 +13,7 @@ const client = new Client({
 		Intents.FLAGS.GUILD_MESSAGES,
 		Intents.FLAGS.GUILD_EMOJIS_AND_STICKERS,
 		Intents.FLAGS.GUILD_MESSAGE_REACTIONS,
+		Intents.FLAGS.GUILD_VOICE_STATES,
 	],
 });
 let connection;
@@ -28,6 +29,8 @@ verification.functions();
 	connection = await require("./database/db");
 	client.connection = connection;
 	client.guildConfig = new Collection();
+	client.voiceConfig = new Collection();
+	client.voiceChannels = [];
 	client.login(process.env.DISCORD_AUTH_TOKEN).catch(error => {
 		console.log(`${colors.red(`\n\n\n${getDateTime()} >>> Couldn't log into Discord. Please check your token in the .env file.`)}\n${error}`);
 	});
@@ -56,5 +59,4 @@ client.on("stickerUpdate", (oldSticker, newSticker) => require("./events/sticker
 client.on("roleCreate", (role) => require("./events/roleCreate")(role, client));
 client.on("roleDelete", (role) => require("./events/roleDelete")(role, client));
 client.on("roleUpdate", (oldRole, newRole) => require("./events/roleUpdate")(oldRole, newRole, client));
-//client.on("rateLimit", (rateLimitData) => require("./events/rateLimit")(rateLimitData));
-
+client.on("voiceStateUpdate", (oldState, newState) => require("./events/voiceStateUpdate")(oldState, newState, client));	// INFBOT Voice Channels

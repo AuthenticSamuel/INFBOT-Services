@@ -23,6 +23,16 @@ module.exports = {
                 .setDescription("Channel")
                 .setRequired(true)))                            // CHANNEL/target
         .addSubcommand(subcommand => subcommand
+            .setName("joinrole")
+            .setDescription("Automatically add a role to a new member")
+            .addRoleOption(option => option
+                .setName("role")
+                .setDescription("Select a role")
+                .setRequired(true)))                            // JOINROLE/role
+        .addSubcommand(subcommand => subcommand
+            .setName("autovoicechannels")
+            .setDescription("Setup INFBOT Automatic Voice Channels"))
+        .addSubcommand(subcommand => subcommand
             .setName("remove")
             .setDescription("Remove an INFBOT integration.")
             .addStringOption(option => option
@@ -31,8 +41,11 @@ module.exports = {
                 .setRequired(true)
                 .addChoice("Members (Join/Leave)", "mlc")       // REMOVE/mlc
                 .addChoice("Nitro Boosts", "nbc")               // REMOVE/nbc
-                .addChoice("Audit Log", "alc")))                // REMOVE/alc
-
+                .addChoice("Audit Log", "alc")                  // REMOVE/alc
+                .addChoice("Join Role", "jr")                   // REMOVE/jr
+                .addChoice("Automatic Voice Channels", "avc"))) // REMOVE/avc
+        
+            
     , async execute(interaction) {
 
         if (!interaction.member.permissions.has(Permissions.FLAGS.ADMINISTRATOR)) {
@@ -46,10 +59,15 @@ module.exports = {
 
         };
 
+        let command = interaction.commandName;
         let subcommand = interaction.options.getSubcommand();
+        let csc = `${command} ${subcommand}`;
         let connection = interaction.client.connection;
+        let guild = interaction.guild;
+        let client = interaction.client;
 
 
+        // Add channel integrations
         if (subcommand === "channel") {
 
             let type = interaction.options.getString("type");
@@ -62,7 +80,7 @@ module.exports = {
                     .setTitle("Invalid channel type")
                     .setDescription("Please select a valid text channel.");
                 await interaction.reply({ embeds: [embed] });
-                logEvent(interaction.commandName, "WARN: TYPE");
+                logEvent(csc, "WARN: TYPE");
                 return;
 
             };
@@ -71,7 +89,7 @@ module.exports = {
 
                 await connection.query(
                     `
-                    UPDATE guilds
+                    UPDATE utils
                     SET welcomeChannelId = '${channel.id}'
                     WHERE guildId = '${interaction.guild.id}'
                     `
@@ -84,14 +102,14 @@ module.exports = {
                     .setTitle("`Member Log` integration has been updated.")
                     .setDescription(`Channel: <#${channel.id}>`);
                 await interaction.reply({ embeds: [embed] });
-                logEvent(interaction.commandName, "SUCCESS: MLC");
+                logEvent(csc, "SUCCESS: MLC");
                 return;
 
             } else if (type === "nbc") {
 
                 await connection.query(
                     `
-                    UPDATE guilds
+                    UPDATE utils
                     SET boostChannelId = '${channel.id}'
                     WHERE guildId = '${interaction.guild.id}'
                     `
@@ -104,14 +122,14 @@ module.exports = {
                     .setTitle("`Nitro Boosts` integration has been updated.")
                     .setDescription(`Channel: <#${channel.id}>`);
                 await interaction.reply({ embeds: [embed] });
-                logEvent(interaction.commandName, "SUCCESS: NBC");
+                logEvent(csc, "SUCCESS: NBC");
                 return;
 
             } else if (type === "alc") {
 
                 await connection.query(
                     `
-                    UPDATE guilds
+                    UPDATE utils
                     SET auditChannelId = '${channel.id}'
                     WHERE guildId = '${interaction.guild.id}'
                     `
@@ -124,15 +142,187 @@ module.exports = {
                     .setTitle("`Audit Log` integration has been updated.")
                     .setDescription(`Channel: <#${channel.id}>`);
                 await interaction.reply({ embeds: [embed] });
-                logEvent(interaction.commandName, "SUCCESS: ALC");
+                logEvent(csc, "SUCCESS: ALC");
                 return;
 
             }
 
         }
 
+
+        // Add join role integration
+        else if (subcommand === "joinrole") {
+
+            let role = interaction.options.getRole("role");
+
+            try {
+
+				await connection.query(
+					`
+					UPDATE utils
+					SET newMemberRoleId = '${role.id}'
+					WHERE guildId = '${interaction.guild.id}'
+					`
+				);
+
+				updateConfig(interaction, 4, role.id);
+	
+				let joinRoleEmbed = new MessageEmbed()
+					.setTitle("`Join Role` integration has been updated.")
+					.setDescription(`Role: <@&${role.id}>`)
+					.setColor(config.COLOR.EVENT);
+				await interaction.reply({ embeds: [joinRoleEmbed], components: [] });
+                logEvent(csc, "SUCCESS: JR");
+                return;
+
+			} catch (error) {
+
+				console.log(error);
+
+				let errorJoinRoleEmbed = new MessageEmbed()
+					.setTitle("Something didn't work...")
+					.setDescription("The developer has been notified and will get on the case ASAP.\nSorry for the inconvenience.")
+					.setColor(config.COLOR.ERROR);
+				await interaction.reply({ embeds: [errorJoinRoleEmbed], components: [] });
+                logEvent(csc, "ERROR: JR");
+                return;
+
+			};
+
+        }
+
+
+
+        // INFBOT Voice Channels
+        else if (subcommand === "autovoicechannels") {
+
+            let channelCreator;
+            let channelCreatorCategory;
+
+            await connection.query(
+                `
+                SELECT channelCreator, channelCreatorCategory
+                FROM voice
+                WHERE guildId = '${guild.id}'
+                `
+            ).then(result => {
+
+                channelCreator = result[0][0].channelCreator;
+                channelCreatorCategory = result[0][0].channelCreatorCategory;
+
+            });
+
+            if (channelCreator !== "None" && channelCreatorCategory !== "None") {
+
+                let avcEmbed = new MessageEmbed()
+                    .setTitle("INFBOT Voice Channels are already setup on this server.")
+                    .setColor(config.COLOR.WARNING);
+                interaction.reply({ embeds: [avcEmbed] });
+                logEvent(csc, "WARN: ACTIVE");
+                return
+
+            } else if (channelCreator === "None" && channelCreatorCategory === "None") {
+
+                try {
+
+                    await guild.channels.create(
+                        config.AUTO_VC.CATEGORY_NAME,
+                        {
+                            type: "GUILD_CATEGORY",
+                        }
+                    ).then(async c => {
+
+                        await connection.query(
+                            `
+                            UPDATE voice
+                            SET channelCreatorCategory = '${c.id}'
+                            WHERE guildId = '${guild.id}'
+                            `
+                        );
+
+                        channelCreatorCategory = c.id;
+
+                    });
+
+                    await guild.channels.create(
+                        config.AUTO_VC.CHANNEL_NAME,
+                        {
+                            type: "GUILD_VOICE",
+                            parent: channelCreatorCategory,
+                        }
+                    ).then(async c => {
+
+                        await connection.query(
+                            `
+                            UPDATE voice
+                            SET channelCreator = '${c.id}'
+                            WHERE guildId = '${guild.id}'
+                            `
+                        );
+
+                        channelCreator = c.id;
+
+                    });
+
+                    client.voiceConfig.set(guild.id, {
+                        channelCreator: channelCreator,
+                        channelCreatorCategory: channelCreatorCategory,
+                    });
+
+                    logEvent(csc, "SUCCESS");
+
+                    let avcEmbed = new MessageEmbed()
+                        .setTitle("`Automatic Voice Channels` integration activated.")
+                        .setDescription(`Enter the \`${config.AUTO_VC.CHANNEL_NAME}\` channel to get started.`)
+                        .setColor(config.COLOR.EVENT);
+                    interaction.reply({ embeds: [avcEmbed] });
+                    return;
+
+                } catch (error) {
+
+                    console.error(error)
+
+                };
+
+            } else {
+
+                await connection.query(
+                    `
+                    UPDATE voice
+                    SET channelCreator = 'None',
+                        channelCreatorCategory = 'None'
+                    WHERE guildId = '${guild.id}'
+                    `
+                );
+
+                await connection.query(
+                    `
+                    DELETE
+                    FROM voiceChannels
+                    WHERE guildId = '${guild.id}'
+                    `
+                );
+
+                client.voiceConfig.set(guild.id, {
+                    channelCreator: "None",
+                    channelCreatorCategory: "None",
+                })
+
+                let avcEmbed = new MessageEmbed()
+                    .setTitle("I've found an issue with your setup...")
+                    .setDescription("It seems that INFBOT Voice Channels were partially setup on this server. This shouldn't happen. We've reset the setup process, therefore, please use `/config autovoicechannels` to re-initialize INFBOT Voice Channels.")
+                    .setColor(config.COLOR.WARNING);
+                interaction.reply({ embeds: [avcEmbed] });
+                logEvent(csc, "WARN: PARTIAL ACTIVE");
+                return;
+
+            };
+
+        }
+
+
         
-        
+        // Remove integrations
         else if (subcommand === "remove") {
 
             let type = interaction.options.getString("type");
@@ -141,7 +331,7 @@ module.exports = {
 
                 await connection.query(
                     `
-                    UPDATE guilds
+                    UPDATE utils
                     SET welcomeChannelId = 'None'
                     WHERE guildId = '${interaction.guild.id}'
                     `
@@ -151,16 +341,16 @@ module.exports = {
 
                 let embed = new MessageEmbed()
                     .setColor(config.COLOR.EVENT)
-                    .setTitle("INFBOT's `Welcome Channel` integration removed.");
+                    .setTitle("INFBOT's `Welcome Channel` integration has been removed.");
                 await interaction.reply({ embeds: [embed] });
-                logEvent(interaction.commandName, "SUCCESS: MLC");
+                logEvent(`${command} ${subcommand}`, "SUCCESS: MLC");
                 return;
 
             } else if (type === "nbc") {
 
                 await connection.query(
                     `
-                    UPDATE guilds
+                    UPDATE utils
                     SET boostChannelId = 'None'
                     WHERE guildId = '${interaction.guild.id}'
                     `
@@ -170,16 +360,16 @@ module.exports = {
 
                 let embed = new MessageEmbed()
                     .setColor(config.COLOR.EVENT)
-                    .setTitle("INFBOT's `Nitro Boost` integration removed.");
+                    .setTitle("INFBOT's `Nitro Boost` integration has been removed.");
                 await interaction.reply({ embeds: [embed] });
-                logEvent(interaction.commandName, "SUCCESS: NBC");
+                logEvent(`${command} ${subcommand}`, "SUCCESS: NBC");
                 return;
 
             } else if (type === "alc") {
 
                 await connection.query(
                     `
-                    UPDATE guilds
+                    UPDATE utils
                     SET auditChannelId = 'None'
                     WHERE guildId = '${interaction.guild.id}'
                     `
@@ -189,9 +379,87 @@ module.exports = {
 
                 let embed = new MessageEmbed()
                     .setColor(config.COLOR.EVENT)
-                    .setTitle("INFBOT's `Audit Log` integration removed.");
+                    .setTitle("INFBOT's `Audit Log` integration has been removed.");
                 await interaction.reply({ embeds: [embed] });
-                logEvent(interaction.commandName, "SUCCESS: ALC");
+                logEvent(`${command} ${subcommand}`, "SUCCESS: ALC");
+                return;
+
+            } else if (type === "jr") {
+
+                await connection.query(
+                    `
+                    UPDATE utils
+                    SET newMemberRoleId = 'None'
+                    WHERE guildId = '${interaction.guild.id}'
+                    `
+                );
+
+                updateConfig(interaction, 4, "None");
+
+                let embed = new MessageEmbed()
+                    .setColor(config.COLOR.EVENT)
+                    .setTitle("INFBOT's `Join Role` integration has been removed.");
+                await interaction.reply({ embeds: [embed] });
+                logEvent(`${command} ${subcommand}`, "SUCCESS: JR");
+                return;
+            
+            } else if (type === "avc") {
+
+                let channelCreator, channelCreatorCategory;
+
+                await connection.query(
+                    `
+                    SELECT channelCreator, channelCreatorCategory
+                    FROM voice
+                    WHERE guildId = '${guild.id}'
+                    `
+                ).then(result => {
+
+                    channelCreator = result[0][0].channelCreator;
+                    channelCreatorCategory = result[0][0].channelCreatorCategory;
+
+                });
+
+                if (channelCreator === "None" && channelCreatorCategory === "None") {
+
+                    let avcEmbed = new MessageEmbed()
+                        .setTitle("INFBOT Voice Channels aren't running on this server.")
+                        .setColor(config.COLOR.EVENT);
+                    interaction.reply({ embeds: [avcEmbed] });
+                    return;
+
+                };
+
+                await connection.query(
+                    `
+                    UPDATE voice
+                    SET channelCreatorCategory = 'None',
+                        channelCreator = 'None'
+                    WHERE guildId = '${guild.id}'
+                    `
+                );
+
+                await connection.query(
+                    `
+                    DELETE
+                    FROM voiceChannels
+                    WHERE guildId = '${guild.id}'
+                    `
+                );
+
+                client.voiceConfig.set(guild.id, {
+                    channelCreator: "None",
+                    channelCreatorCategory: "None",
+                })
+
+                if (guild.channels.cache.find((c) => c.id === channelCreator)) guild.channels.cache.get(channelCreator).delete();
+                if (guild.channels.cache.find((c) => c.id === channelCreatorCategory)) guild.channels.cache.get(channelCreatorCategory).delete();
+                    
+                let avcEmbed = new MessageEmbed()
+                    .setTitle("`Auto Voice Channels` integration has been removed.")
+                    .setColor(config.COLOR.EVENT);
+                interaction.reply({ embeds: [avcEmbed] });
+                logEvent(csc, "SUCCESS");
                 return;
 
             }

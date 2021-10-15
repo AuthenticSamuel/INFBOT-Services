@@ -4,7 +4,21 @@ module.exports = async (guild, client, connection) => {
 
 		await connection.query(
 			`
-			INSERT INTO guilds
+			INSERT INTO guilds (guildId)
+			VALUES('${guild.id}')
+			`
+		);
+
+		await connection.query(
+			`
+			INSERT INTO utils (guildId)
+			VALUES('${guild.id}')
+			`
+		);
+
+		await connection.query(
+			`
+			INSERT INTO voice (guildId)
 			VALUES('${guild.id}')
 			`
 		);

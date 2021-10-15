@@ -10,6 +10,30 @@ module.exports = async (guild, connection) => {
 			`
 		);
 
+		await connection.query(
+			`
+			DELETE
+			FROM utils
+			WHERE guildId = '${guild.id}'
+			`
+		);
+
+		await connection.query(
+			`
+			DELETE
+			FROM voice
+			WHERE guildId = '${guild.id}'
+			`
+		);
+
+		await connection.query(
+			`
+			DELETE
+			FROM voiceChannels
+			WHERE guildId = '${guild.id}'
+			`
+		);
+
 		client.guildConfig.remove(guild.id);
 
         console.log(colors.brightYellow(`${getDateTime()} >>> Left guild: ${guild.name} (ID: ${guild.id})`));

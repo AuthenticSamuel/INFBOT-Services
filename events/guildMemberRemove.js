@@ -23,23 +23,25 @@ module.exports = async (member, client) => {
 
 		};
 
-		if (auditChannelId !== "None") {
+		// // to be looked at
 
-			let auditChannel = member.guild.channels.cache.get(auditChannelId);
+		// if (auditChannelId !== "None") {
 
-			const log = await member.guild.fetchAuditLogs({
-				limit: 1,
-				type: "MEMBER_KICK",
-			});
+		// 	let auditChannel = member.guild.channels.cache.get(auditChannelId);
 
-			const kickLog = log.entries.first();
-			if (!kickLog) return;
+		// 	const log = await member.guild.fetchAuditLogs({
+		// 		limit: 1,
+		// 		type: "MEMBER_KICK",
+		// 	});
 
-			const { executor, target, reason } = kickLog;
+		// 	const kickLog = log.entries.first();
+		// 	if (!kickLog) return;
 
-			if (target.id === member.user.id) await auditChannel.send("`" + `${auditDate()} >>> User kicked: '${member.user.tag}' (ID: ${member.user.id}) by '${executor.tag}' (ID: ${executor.id})${reason ? ". Reason: " + reason : ""}` + "`")
+		// 	const { executor, target, reason } = kickLog;
 
-		};
+		// 	if (target.id === member.user.id) await auditChannel.send("`" + `${auditDate()} >>> User kicked: '${member.user.tag}' (ID: ${member.user.id}) by '${executor.tag}' (ID: ${executor.id})${reason ? ". Reason: " + reason : ""}` + "`")
+
+		// };
 
 	} catch (error) {
 

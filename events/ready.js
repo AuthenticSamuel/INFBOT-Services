@@ -12,11 +12,48 @@ module.exports = async (client) => {
 
     let totalMembers = 0;
     let allGuildInfo = [];
-    client.guilds.cache.forEach((guild) => {
+    client.guilds.cache.forEach(async guild => {
 
         if (guild.memberCount != NaN) totalMembers += guild.memberCount;
         allGuildInfo.push(new Server(guild.id, guild.name, guild.memberCount));
         guild.members.fetch();
+
+        // First start up only
+
+        // try {
+
+        //     await connection.query(
+        //         `
+        //         INSERT INTO guilds (guildId)
+        //         VALUES('${guild.id}')
+        //         `
+        //     );
+            
+        // } catch {console.error};
+        
+        // try {
+
+        //     await connection.query(
+        //         `
+        //         INSERT INTO utils (guildId)
+        //         VALUES('${guild.id}')
+        //         `
+        //     );
+
+        // } catch {console.error};
+
+        // try {
+
+        //     await connection.query(
+        //         `
+        //         INSERT INTO voice (guildId)
+        //         VALUES('${guild.id}')
+        //         `
+        //     );
+
+        // } catch {console.error};      
+
+        // End of
 
     });
 
@@ -48,7 +85,7 @@ module.exports = async (client) => {
             await connection.query(
                 `
                 SELECT *
-                FROM guilds
+                FROM utils
                 WHERE guildId = '${guild.id}'
                 `
             ).then(result => {
@@ -58,8 +95,43 @@ module.exports = async (client) => {
                 for (const [key, value] of Object.entries(resultObject)) {
                     if (key !== "guildId") configOptions.push(value)
                 };
-                client.guildConfig.set(guild.id, configOptions)
+                client.guildConfig.set(guild.id, configOptions);
                 
+            });
+
+            await connection.query(
+                `
+                SELECT channelCreator, channelCreatorCategory
+                FROM voice
+                WHERE guildId = '${guild.id}'
+                `
+            ).then(result => {
+
+                client.voiceConfig.set(guild.id, {
+                    channelCreator: result[0][0].channelCreator,
+                    channelCreatorCategory: result[0][0].channelCreatorCategory
+                });
+
+            });
+
+            await connection.query(
+                `
+                SELECT channelId
+                FROM voiceChannels
+                WHERE guildId = '${guild.id}'
+                `
+            ).then(result => {
+
+                if (result[0]) {
+
+                    for (let i = 0; i < result[0].length; i++) {
+
+                        client.voiceChannels.push(result[0][i].channelId);
+
+                    };
+
+                };
+
             });
     
         });
