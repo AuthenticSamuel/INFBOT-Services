@@ -1,16 +1,16 @@
-<h1 align="center">▶ INFBOT Utilities V1.0.1 ◀</h1>
+<h1 align="center">▶ INFBOT Services V1.0.1 ◀</h1>
 <h2 align="center">🛠 Still in development 🛠</h2><br>
 
 <div>
-  <h2>Welcome to INFBOT Utilities' GitHub page!</h2>
+  <h2>Welcome to INFBOT Services' GitHub page!</h2>
   <div>
-    <p><b>INFBOT Utilities</b> is a Discord bot that helps server staff manage and moderate their servers.</p>
+    <p><b>INFBOT Services</b> is a Discord bot that helps server staff manage and moderate their servers.</p>
     <p>All commands are slash commands, meaning their are directly integrated into Discord!</p>
   </div>
 </div><br>
 
 <div>
-  <h2>INFBOT Utilities is a <a href="https://discord.js.org/">Discord.JS</a> bot that uses:</h2>
+  <h2>INFBOT Services is a <a href="https://discord.js.org/">Discord.JS</a> bot that uses:</h2>
   <ul>
     <li><a href="https://nodejs.org/en/">Node.js</a> @16.11.0</li>
     <li><a href="https://discord.js.org/#/">Discord.js</a> ^13.2.0</li>
