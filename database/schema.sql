@@ -6,7 +6,7 @@ USE infbotutils;
 -- CREATE TABLES
 
 CREATE TABLE IF NOT EXISTS guilds (
-    guildId VARCHAR(32) NOT NULL
+    guildId VARCHAR(32) NOT NULL,
     PRIMARY KEY (guildId)
 ) ENGINE=INNODB;
 
