@@ -1,6 +1,6 @@
 const colors = require("colors");
 const getDateTime = require("./functions/getDateTime");
-for (let i = 0; i < 10; i++) console.log("");
+console.log("\n".repeat(10));
 console.log(colors.cyan(`${getDateTime()} >>> Starting INFBOT Utilities...`));
 require("dotenv").config();
 const { Client, Intents, Collection } = require("discord.js");
@@ -49,7 +49,7 @@ client.on("guildBanAdd", (ban) => require("./events/guildBanAdd")(ban, client));
 client.on("guildBanRemove", (ban) => require("./events/guildBanRemove")(ban, client));
 client.on("channelCreate", (channel) => require("./events/channelCreate")(channel, client));
 client.on("channelDelete", (channel) => require("./events/channelDelete")(channel, client));
-client.on("channelUpdate", (oldChannel, newChannel) => require("./events/channelUpdate")(oldChannel, newChannel, client));
+// client.on("channelUpdate", (oldChannel, newChannel) => require("./events/channelUpdate")(oldChannel, newChannel, client));
 client.on("emojiCreate", (emoji) => require("./events/emojiCreate")(emoji, client));
 client.on("emojiDelete", (emoji) => require("./events/emojiDelete")(emoji, client)); 
 client.on("emojiUpdate", (oldEmoji, newEmoji) => require("./events/emojiUpdate")(oldEmoji, newEmoji, client));

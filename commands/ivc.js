@@ -38,6 +38,13 @@ module.exports = {
 				.setName("value")
 				.setDescription("Value to set")
 				.setRequired(true)))
+		.addSubcommand(subcommand => subcommand
+			.setName("adduser")
+			.setDescription("Invite a user to your private IVC")
+			.addUserOption(option => option
+				.setName("user")
+				.setDescription("User to invite")
+				.setRequired(true)))
 
 
 	, async execute(interaction) {
@@ -50,7 +57,6 @@ module.exports = {
 		let command = interaction.commandName;
 		let subcommand = interaction.options.getSubcommand();
 		let csc = `${command} ${subcommand}`;
-
 
 		// Status information
 		if (subcommand === "info") {
@@ -222,7 +228,6 @@ module.exports = {
 				};
 
 				await member.voice.channel.setUserLimit(optionInt);
-
 				
 				let userLimit = "";
 				if (member.voice.channel.userLimit == 0) userLimit = "an unlimited amount of users";
@@ -256,13 +261,36 @@ module.exports = {
 			};
 
 			if (option) {
+
+				const channel = guild.channels.cache.get(member.voice.channel.id);
 	
-				await guild.channels.cache.get(member.voice.channel.id).permissionOverwrites.edit(
+				await channel.permissionOverwrites.edit(
 					guild.id, {
 						CONNECT: false,
 					},
 				);
-	
+
+				let users = [];
+
+				for (const user of channel.members) {
+
+					users.push(user[1].user.id);
+
+					await channel.permissionOverwrites.edit(
+						user[1].user, {
+							CONNECT: true,	
+						},
+					);
+				}
+
+				await connection.query(
+					`
+					UPDATE voicechannels
+					SET invitedUsersId = '${users.join(",")}'
+					WHERE channelId = '${channel.id}'
+					`
+				);
+
 				let lockEmbed = new MessageEmbed()
 					.setTitle("You've successfully locked your channel.")
 					.setDescription(`Use \`/ivc lock false\` to unlock it.`)
@@ -271,13 +299,46 @@ module.exports = {
 				logEvent(csc, "SUCCESS");
 				return;
 
-			} else {				
+			} else {
+				
+				const channel = guild.channels.cache.get(member.voice.channel.id);
 	
-				await guild.channels.cache.get(member.voice.channel.id).permissionOverwrites.edit(
+				await channel.permissionOverwrites.edit(
 					guild.id, {
 						CONNECT: true,
 					},
 				);
+
+				await connection.query(
+					`
+					SELECT invitedUsersId
+					FROM voicechannels
+					WHERE channelId = '${channel.id}'
+					`
+				).then(async result => {
+
+					if (result[0][0].invitedUsersId !== null) {
+
+						const users = [...result[0][0].invitedUsersId.split(",")];
+
+						for (const userId of users) {
+							await channel.permissionOverwrites.edit(
+								userId, {
+									CONNECT: null,
+								},
+							);
+						}
+
+						connection.query(
+							`
+							UPDATE voicechannels
+							SET invitedUsersId = NULL
+							WHERE channelId = '${channel.id}'
+							`
+						);
+					}
+
+				});
 	
 				let lockEmbed = new MessageEmbed()
 					.setTitle("You've successfully unlocked your channel.")
@@ -288,7 +349,21 @@ module.exports = {
 
 			};
 
-		};
+		} /* else if (subcommand === "adduser") {
+
+			// const user = interaction.options.getUser("user");
+			
+			// let lockEmbed = new MessageEmbed()
+			// 	.setTitle("User invited to channel.")
+			// 	.setDescription(`User: @${user}`)
+			// 	.setColor(config.COLOR.EVENT);
+			// await interaction.reply({ embeds: [lockEmbed] });
+			// logEvent(csc, "SUCCESS");
+			// return;
+
+			console.log(member.presences)
+
+		} */
 
 	},
 

@@ -37,6 +37,7 @@ CREATE TABLE IF NOT EXISTS voiceChannels (
     id INT NOT NULL AUTO_INCREMENT,
     guildId VARCHAR(32) NOT NULL,
     channelId VARCHAR(32) NOT NULL,
+    invitedUsersId TEXT NULL,
     PRIMARY KEY (id)
 ) ENGINE=INNODB;
 
