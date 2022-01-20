@@ -4,8 +4,11 @@ const config = require("../config.json");
 const logEvent = require("../functions/logEvent");
 const capitalizeFirstLetter = require("../functions/capitalizeFirstLetter");
 
-module.exports = {
+/**
+ * ! Handle INFBOT VOICE CHANNELS (IVC) commands
+ */
 
+module.exports = {
 	data: new SlashCommandBuilder()
 		.setName("ivc")
 		.setDescription("Commands for INFBOT Voice Channels")
@@ -45,98 +48,64 @@ module.exports = {
 				.setName("user")
 				.setDescription("User to invite")
 				.setRequired(true)))
-
-
 	, async execute(interaction) {
+		const client = interaction.client;
+		const connection = client.connection;
+		const guild = interaction.guild;
+		const member = interaction.member;
+		const command = interaction.commandName;
+		const subcommand = interaction.options.getSubcommand();
+		const csc = `${command} ${subcommand}`;
 
-		let client = interaction.client;
-		let connection = client.connection;
-		let guild = interaction.guild;
-		let member = interaction.member;
-
-		let command = interaction.commandName;
-		let subcommand = interaction.options.getSubcommand();
-		let csc = `${command} ${subcommand}`;
-
-		// Status information
+		//* Status information
 		if (subcommand === "info") {
-
-			let option = interaction.options.getString("type")
+			const option = interaction.options.getString("type")
 
 			if (option === "ivca") {
-
-				let { channelCreator, channelCreatorCategory } = client.voiceConfig.get(guild.id);
-				
+				const { channelCreator, channelCreatorCategory } = client.voiceConfig.get(guild.id);
 				if (channelCreator !== "None" && channelCreatorCategory !== "None") {
-
-					let ivcaEmbed = new MessageEmbed()
+					const ivcaEmbed = new MessageEmbed()
 						.setTitle("INFBOT Voice Channels (IVCs) are up and running!")
 						.setColor(config.COLOR.EVENT);
 					await interaction.reply({ embeds: [ivcaEmbed] });
 					logEvent(csc, "SUCCESS: ACTIVE");
 					return;
-
 				} else if (channelCreator === "None" && channelCreatorCategory === "None") {
-
-					let ivcaEmbed = new MessageEmbed()
+					const ivcaEmbed = new MessageEmbed()
 						.setTitle("INFBOT Voice Channels (IVCs) aren't running on this server.")
 						.setDescription("If you're an admin, use `/integrations autovoicechannels` to initialize INFBOT Voice Channels.")
 						.setColor(config.COLOR.EVENT);
 					await interaction.reply({ embeds: [ivcaEmbed] });
 					logEvent(csc, "SUCCESS: INACTIVE");
 					return;
-
 				} else {
-
-					await connection.query(
-						`
-						UPDATE voice
-						SET channelCreator = 'None',
-							channelCreatorCategory = 'None'
-						WHERE guildId = '${guild.id}'
-						`
-					);
-
-					await connection.query(
-						`
-						DELETE
-						FROM voiceChannels
-						WHERE guildId = '${guild.id}'
-						`
-					);
-
+					await connection.query(`UPDATE voice SET channelCreator = 'None', channelCreatorCategory = 'None' WHERE guildId = '${guild.id}'`);
+					await connection.query(`DELETE FROM voiceChannels WHERE guildId = '${guild.id}'`);
 					client.voiceConfig.set(guild.id, {
 						channelCreator: "None",
 						channelCreatorCategory: "None",
 					});
-
-					let ivcaEmbed = new MessageEmbed()
+					const ivcaEmbed = new MessageEmbed()
 						.setTitle("I've found an issue with your setup...")
 						.setDescription("It seems that INFBOT Voice Channels were partially setup on this server. This shouldn't happen. We've reset the setup process, therefore, please use `/config autovoicechannels` to re-initialize INFBOT Voice Channels.")
 						.setColor(config.COLOR.WARNING);
 					interaction.reply({ embeds: [ivcaEmbed] });
 					logEvent(csc, "WARN: PARTIAL ACTIVE");
 					return;
-
-				};
-
+				}
 			} else if (option === "uci") {
-
 				if (!member.voice.channel) {
-
-					let uciEmbed = new MessageEmbed()
+					const uciEmbed = new MessageEmbed()
 						.setTitle("You need to be in a voice channel.")
 						.setColor(config.COLOR.WARNING);
 					await interaction.reply({ embeds: [uciEmbed] });
 					logEvent(csc, "WARN: NO VC");
 					return;
+				}
 
-				};
-
-				let channel = member.voice.channel;
-				let userLimit = channel.userLimit === 0 ? "Unlimited" : channel.userLimit;
-				
-				let uciEmbed = new MessageEmbed()
+				const channel = member.voice.channel;
+				const userLimit = channel.userLimit === 0 ? "Unlimited" : channel.userLimit;
+				const uciEmbed = new MessageEmbed()
 					.setTitle("Here's some information about your voice channel.")
 					.addFields(
 						{ name: "Name:", value: `${channel.name}`, inline: true },
@@ -148,179 +117,128 @@ module.exports = {
 					)
 					.setColor(config.COLOR.EVENT);
 				await interaction.reply({ embeds: [uciEmbed] });
-				logEvent(csc)
+				logEvent(csc);
 				return;
-
 			}
-
 		} else if (subcommand === "set") {
-
-			let optionString = interaction.options.getString("setting");
-			let optionInt = interaction.options.getInteger("value");
-
+			const optionString = interaction.options.getString("setting");
+			const optionInt = interaction.options.getInteger("value");
 			if (optionString === "br") {
-
 				if (!member.voice.channel || !client.voiceChannels.includes(member.voice.channel.id)) {
-
-					let brEmbed = new MessageEmbed()
+					const brEmbed = new MessageEmbed()
 						.setTitle("Warning!")
 						.setDescription("You need to be in an INFBOT Voice Channel (IVC).")
 						.setColor(config.COLOR.WARNING);
 					await interaction.reply({ embeds: [brEmbed] });
 					logEvent(csc, "WARN: NOT IN IVC");
 					return;
-
-				};
-
-				let maxBitrate = 96;
-				switch (guild.premiumTier) {
-					case "NONE": break;
-					case "TIER_1": maxBitrate = 128; break;
-					case "TIER_2": maxBitrate = 256; break;
-					case "TIER_3": maxBitrate = 384; break;
-				};
-
+				}
+				const getMaxBitrate = (inputTier) => {
+					switch (inputTier) {
+						case "NONE": return 96;
+						case "TIER_1": return 128;
+						case "TIER_2": return 256;
+						case "TIER_3": return 384;
+					}
+				}
+				const maxBitrate = getMaxBitrate(guild.premiumTier);
 				if (optionInt < 8 || optionInt > maxBitrate) {
-
-					let brEmbed = new MessageEmbed()
+					const brEmbed = new MessageEmbed()
 						.setTitle("Warning!")
 						.setDescription(`Please provide a valid bitrate.\n\nThe bitrate is a number between \`8\`kbps and \`${maxBitrate}\`kbps.`)
 						.setColor(config.COLOR.WARNING);
 					await interaction.reply({ embeds: [brEmbed] });
 					logEvent(csc, "WARN: OUT OF RANGE");
 					return;
-
-				};
-
+				}
 				await member.voice.channel.setBitrate(Math.round(optionInt) * 1000);
-
-				let brEmbed = new MessageEmbed()
+				const brEmbed = new MessageEmbed()
 					.setTitle(`Your channel's bitrate is now set to ${member.voice.channel.bitrate / 1000}kbps.`)
 					.setColor(config.COLOR.EVENT);
 				await interaction.reply({ embeds: [brEmbed] });
 				logEvent(csc, `SUCCESS: ${member.voice.channel.bitrate / 1000}KBPS`);
 				return;
-
 			} else if (optionString === "ul") {
-
 				if (!member.voice.channel || !client.voiceChannels.includes(member.voice.channel.id)) {
-
-					let ulEmbed = new MessageEmbed()
+					const ulEmbed = new MessageEmbed()
 						.setTitle("Warning!")
 						.setDescription("You need to be in an INFBOT Voice Channel (IVC).")
 						.setColor(config.COLOR.WARNING);
 					await interaction.reply({ embeds: [ulEmbed] });
 					logEvent(csc, "WARN: NOT IN IVC");
 					return;
-
-				};
-
+				}
 				if (optionInt < 0 || optionInt > 99) {
-
-					let ulEmbed = new MessageEmbed()
+					const ulEmbed = new MessageEmbed()
 						.setTitle("Warning!")
 						.setDescription(`Please provide a valid userlimit.\n\nThe userlimit is a number between \`0\` (unlimited) and \`99\` users.`)
 						.setColor(config.COLOR.WARNING);
 					await interaction.reply({ embeds: [ulEmbed] });
 					logEvent(csc, "WARN: OUT OF RANGE");
 					return;
-
-				};
-
+				}
 				await member.voice.channel.setUserLimit(optionInt);
-				
-				let userLimit = "";
-				if (member.voice.channel.userLimit == 0) userLimit = "an unlimited amount of users";
-				else if (member.voice.channel.userLimit == 1) userLimit = "1 user";
-				else userLimit = `${member.voice.channel.userLimit} users`;
-				
-				let ulEmbed = new MessageEmbed()
+
+				const getUserLimitString = (userLimit) => {
+					switch (userLimit) {
+						case 0: return "an unlimited amount of users";
+						case 1: return "1 user";
+						default: return `${userLimit} users`;
+					}
+				}
+				const userLimit = getUserLimitString(member.voice.channel.userLimit);
+				const ulEmbed = new MessageEmbed()
 					.setTitle(`Your channel's userlimit is now set to ${userLimit}.`)
 					.setColor(config.COLOR.EVENT);
 				await interaction.reply({ embeds: [ulEmbed] });
 				logEvent(csc, `SUCCESS: ${member.voice.channel.userLimit} USERS`);
 				return;
-
-			};
-
-
+			}
 		} else if (subcommand === "lock") {
-
-			let option = interaction.options.getBoolean("value");
-
+			const option = interaction.options.getBoolean("value");
 			if (!member.voice.channel || !client.voiceChannels.includes(member.voice.channel.id)) {
-
-				let lockEmbed = new MessageEmbed()
+				const lockEmbed = new MessageEmbed()
 					.setTitle("Warning!")
 					.setDescription("You need to be in an INFBOT Voice Channel (IVC).")
 					.setColor(config.COLOR.WARNING);
 				await interaction.reply({ embeds: [lockEmbed] });
 				logEvent(csc, "WARN: NOT IN IVC");
 				return;
-
-			};
-
+			}
 			if (option) {
-
 				const channel = guild.channels.cache.get(member.voice.channel.id);
-	
 				await channel.permissionOverwrites.edit(
 					guild.id, {
 						CONNECT: false,
 					},
 				);
-
 				let users = [];
-
 				for (const user of channel.members) {
-
 					users.push(user[1].user.id);
-
 					await channel.permissionOverwrites.edit(
 						user[1].user, {
 							CONNECT: true,	
 						},
 					);
 				}
-
-				await connection.query(
-					`
-					UPDATE voicechannels
-					SET invitedUsersId = '${users.join(",")}'
-					WHERE channelId = '${channel.id}'
-					`
-				);
-
-				let lockEmbed = new MessageEmbed()
+				await connection.query(`UPDATE voicechannels SET invitedUsersId = '${users.join(",")}' WHERE channelId = '${channel.id}'`);
+				const lockEmbed = new MessageEmbed()
 					.setTitle("You've successfully locked your channel.")
 					.setDescription(`Use \`/ivc lock false\` to unlock it.`)
 					.setColor(config.COLOR.EVENT);
 				await interaction.reply({ embeds: [lockEmbed] });
 				logEvent(csc, "SUCCESS");
 				return;
-
 			} else {
-				
 				const channel = guild.channels.cache.get(member.voice.channel.id);
-	
 				await channel.permissionOverwrites.edit(
 					guild.id, {
 						CONNECT: true,
 					},
 				);
-
-				await connection.query(
-					`
-					SELECT invitedUsersId
-					FROM voicechannels
-					WHERE channelId = '${channel.id}'
-					`
-				).then(async result => {
-
+				await connection.query(`SELECT invitedUsersId FROM voicechannels WHERE channelId = '${channel.id}'`).then(async result => {
 					if (result[0][0].invitedUsersId !== null) {
-
 						const users = [...result[0][0].invitedUsersId.split(",")];
-
 						for (const userId of users) {
 							await channel.permissionOverwrites.edit(
 								userId, {
@@ -328,27 +246,16 @@ module.exports = {
 								},
 							);
 						}
-
-						connection.query(
-							`
-							UPDATE voicechannels
-							SET invitedUsersId = NULL
-							WHERE channelId = '${channel.id}'
-							`
-						);
+						connection.query(`UPDATE voicechannels SET invitedUsersId = NULL WHERE channelId = '${channel.id}'`);
 					}
-
 				});
-	
-				let lockEmbed = new MessageEmbed()
+				const lockEmbed = new MessageEmbed()
 					.setTitle("You've successfully unlocked your channel.")
 					.setColor(config.COLOR.EVENT);
 				await interaction.reply({ embeds: [lockEmbed] });
 				logEvent(csc, "SUCCESS");
 				return;
-
 			};
-
 		} /* else if (subcommand === "adduser") {
 
 			// const user = interaction.options.getUser("user");
@@ -364,7 +271,5 @@ module.exports = {
 			console.log(member.presences)
 
 		} */
-
-	},
-
-};
+	}
+}

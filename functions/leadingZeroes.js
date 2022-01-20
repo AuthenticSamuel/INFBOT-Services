@@ -1,7 +1,5 @@
-module.exports = (value) => {
+/**
+ * ! Add leading zeroes
+ */
 
-    let valueString = value + "";
-    if (valueString.length < 2) return "0" + valueString;
-    else return valueString;
-
-}
+module.exports = (value) => value.toString().length < 2 ? `0${value}` : `${value}`;

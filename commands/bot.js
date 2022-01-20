@@ -6,29 +6,24 @@ const leadingZeroes = require("../functions/leadingZeroes");
 const packageJSON = require("../package.json");
 
 module.exports = {
-    
     data: new SlashCommandBuilder()
         .setName("bot")
         .setDescription("Get INFBOT information")
     , async execute(interaction) {
-
-        let client = interaction.client;
-
+        const client = interaction.client;
         let totalSeconds = (client.uptime / 1000);
-        let totalDays = Math.floor(totalSeconds / 86400);
+        const totalDays = Math.floor(totalSeconds / 86400);
         totalSeconds %= 86400;
-        let totalHours = Math.floor(totalSeconds / 3600);
+        const totalHours = Math.floor(totalSeconds / 3600);
         totalSeconds %= 3600;
-        let totalMinutes = Math.floor(totalSeconds / 60);
-        let seconds = Math.floor(totalSeconds % 60);
-        let uptime = `${totalDays}:${leadingZeroes(totalHours)}:${leadingZeroes(totalMinutes)}:${leadingZeroes(seconds)}`;
-
-        let pingEmbed = new MessageEmbed()
+        const totalMinutes = Math.floor(totalSeconds / 60);
+        const seconds = Math.floor(totalSeconds % 60);
+        const uptime = `${totalDays}:${leadingZeroes(totalHours)}:${leadingZeroes(totalMinutes)}:${leadingZeroes(seconds)}`;
+        const pingEmbed = new MessageEmbed()
             .setColor(config.COLOR.EVENT)
             .setTitle("Pinging...");
         const sent = await interaction.reply({ embeds: [pingEmbed], fetchReply: true });
-        
-        let embed = new MessageEmbed()
+        const embed = new MessageEmbed()
             .setColor(config.COLOR.EVENT)
             .setTitle("INFBOT Utilities")
             .setThumbnail(client.user.displayAvatarURL())
@@ -48,7 +43,5 @@ module.exports = {
         await interaction.editReply({ embeds: [embed] });
         logEvent(interaction.commandName);
         return;
-
-    },
-
-};
+    }
+}

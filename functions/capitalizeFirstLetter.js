@@ -1,5 +1,5 @@
-module.exports = (string) => {
+/**
+ * ! Function to capitalize first character
+ */
 
-    return string[0].toUpperCase() + string.slice(1);
-
-};
+module.exports = (string) => string[0].toUpperCase() + string.slice(1);

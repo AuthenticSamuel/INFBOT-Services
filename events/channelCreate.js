@@ -1,34 +1,28 @@
 const auditDate = require("../functions/auditDate");
 
-module.exports = async (channel, client) => {
+/**
+ * ! Handle logs for created channels
+ */
 
+module.exports = async (channel, client) => {
 	let auditChannelId = client.guildConfig.get(channel.guild.id)[2];
     if (auditChannelId === "None") return;
-
     try {
-
-        let auditChannel = channel.guild.channels.cache.get(auditChannelId);
-        let parent = channel.guild.channels.cache.get(channel.parentId);
-        let channelType = "";
-        switch (channel.type) {
-
-            case "GUILD_TEXT": channelType = "text channel"; break;
-            case "GUILD_VOICE": channelType = "voice channel"; break;
-            case "GUILD_CATEGORY": channelType = "category"; break;
-            case "GUILD_NEWS": channelType = "news channel"; break;
-            case "GUILD_STORE": channelType = "store channel"; break;
-            case "GUILD_TEXT": channelType = "text"; break;
-            case "GUILD_STAGE_VOICE": channelType = "stage voice channel"; break;
-            default: channelType = "channel"; break;
-
-        };
-
+        const auditChannel = channel.guild.channels.cache.get(auditChannelId);
+        const parent = channel.guild.channels.cache.get(channel.parentId);
+        const getChannelType = (inputType) => {
+            switch (inputType) {
+                case "GUILD_TEXT": return "text channel";
+                case "GUILD_VOICE": return "voice channel";
+                case "GUILD_CATEGORY": return "category";
+                case "GUILD_NEWS": return "news channel";
+                case "GUILD_STORE": return "store channel";
+                case "GUILD_TEXT": return "text";
+                case "GUILD_STAGE_VOICE": return "stage voice channel";
+                default: return "channel";
+            }
+        }
+        const channelType = getChannelType(channel.type);
         await auditChannel.send("`" + `${auditDate()} >>> Added ${channelType} '${channel.name}' (ID: ${channel.id})${parent ? ` in category '${parent.name}' (ID: ${parent.id})` : ""}` + "`");
-
-    } catch (error) {
-
-        console.error(error);
-
-    };
-
-};
+    } catch {console.error}
+}

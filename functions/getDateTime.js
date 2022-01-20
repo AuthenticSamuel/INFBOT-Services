@@ -1,6 +1,8 @@
-module.exports = () => {
+/**
+ * ! Get datetime for console
+ */
 
-    let getDate = new Date();
+module.exports = () => {
+    const getDate = new Date();
     return `${getDate.toLocaleString()}`;
-    
 }

@@ -1,19 +1,14 @@
 const auditDate = require("../functions/auditDate");
 
+/**
+ * ! Handle logs for deleted stickers
+ */
+
 module.exports = async (sticker, client) => {
-
-    let auditChannelId = client.guildConfig.get(sticker.guild.id)[2];
+    const auditChannelId = client.guildConfig.get(sticker.guild.id)[2];
     if (auditChannelId === "None") return;
-
     try {
-
-        let auditChannel = sticker.guild.channels.cache.get(auditChannelId);
+        const auditChannel = sticker.guild.channels.cache.get(auditChannelId);
         await auditChannel.send("`" + `${auditDate()} >>> Removed sticker '${sticker.name}' (ID: ${sticker.id})` + "`");
-
-    } catch (error) {
-
-        console.error(error);
-
-    };
-    
-};
+    } catch {console.error}
+}

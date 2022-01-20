@@ -1,12 +1,14 @@
 const { MessageEmbed } = require("discord.js");
 const config = require("../config.json");
 
-module.exports = (title = "Error", desc = "We've encountered an error.") => {
+/**
+ * ! Create an error embed
+ */
 
-    let embed = new MessageEmbed()
+module.exports = (title = "Error", desc = "We've encountered an error.") => {
+    const embed = new MessageEmbed()
         .setTitle(title)
         .setDescription(desc)
         .setColor(config.COLOR.ERROR)
     return embed;
-
-};
+}

@@ -1,87 +1,46 @@
 const logVoice = require("../functions/logVoice");
 
+/**
+ * ! Methods to create and delete channels
+ */
+
 module.exports = async (oldState, newState, client) => {
-
     if (newState.channelId === oldState.channelId) return;
-
-    let connection = client.connection;
-
-    let { channelCreator, channelCreatorCategory } = client.voiceConfig.get(newState.guild.id);
+    const connection = client.connection;
+    const { channelCreator, channelCreatorCategory } = client.voiceConfig.get(newState.guild.id);
 
     if (newState.channelId === channelCreator) {
-
         try {
-
             logVoice("creating");
-
             await newState.guild.channels.create(
                 newState.member.user.username,
                 {
                     type: "GUILD_VOICE",
                     parent: channelCreatorCategory,
                 }
-            ).then(async c => {
-
-                newState.member.voice.setChannel(c.id);
-                client.voiceChannels.push(c.id);
-
-                await connection.query(
-                    `
-                    INSERT INTO voiceChannels (guildId, channelId)
-                    VALUES ('${newState.guild.id}', '${c.id}')
-                    `
-                );
-
+            ).then(async channel => {
+                newState.member.voice.setChannel(channel.id);
+                client.voiceChannels.push(channel.id);
+                await connection.query(`INSERT INTO voiceChannels (guildId, channelId) VALUES ('${newState.guild.id}', '${channel.id}')`);
             });
-
-
             logVoice("created");
+        } catch {console.error}
+    }
 
-        } catch (error) {
+    const autoChannels = client.voiceChannels;
 
-            console.error(error);
-
-        };
-
-    };
-
-    let autoChannels = client.voiceChannels;
-
-    for (let i = 0; i < autoChannels.length; i++) {
-
-        if (oldState.channelId === autoChannels[i]) {
-
-            let autoChannel = oldState.guild.channels.cache.get(autoChannels[i]);
-
+    for (const autoChannelId of autoChannels) {
+        if (oldState.channelId === autoChannelId) {
+            const autoChannel = oldState.guild.channels.cache.get(autoChannelId);
             if (autoChannel.members.size < 1) {
-
-                logVoice("deleting");
-
                 try {
-
+                    logVoice("deleting");
                     autoChannel.delete();
-                    client.voiceChannels = client.voiceChannels.filter(c => c !== autoChannel.id);
-
-                    await connection.query(
-                        `
-                        DELETE
-                        FROM voiceChannels
-                        WHERE channelId = '${autoChannel.id}'
-                        `
-                    );
-
-                } catch (error) {
-
-                    console.error(error);
-                    
-                };
-
-                logVoice("deleted");
-
-            };
-
-        };
-
-    };
-
-};
+                    client.voiceChannels = client.voiceChannels.filter(channel => channel !== autoChannel.id);
+                    await connection.query(`DELETE FROM voiceChannels WHERE channelId = '${autoChannel.id}'`);
+                    logVoice("deleted");
+                } catch {console.error}
+            }
+        }
+    }
+}

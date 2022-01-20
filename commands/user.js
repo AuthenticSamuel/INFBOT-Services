@@ -4,8 +4,12 @@ const config = require("../config.json");
 const formatFullDate = require("../functions/formatFullDate");
 const logEvent = require("../functions/logEvent");
 
+/**
+ * ! USER command
+ * ! Gives the initial user relevant information about the target user
+ */
+
 module.exports = {
-    
     data: new SlashCommandBuilder()
         .setName("user")
         .setDescription("Get user information")
@@ -14,27 +18,22 @@ module.exports = {
             .setDescription("User you want information on")
             .setRequired(true))
     , async execute(interaction) {
-
-        let user = interaction.options.getUser("target");
-        let member = await interaction.guild.members.cache.get(user.id);
-        
-        let embed = new MessageEmbed()
+        const user = interaction.options.getUser("target");
+        const member = await interaction.guild.members.cache.get(user.id);
+        const embed = new MessageEmbed()
             .setColor(config.COLOR.EVENT)
             .setThumbnail(user.avatarURL())
             .setTitle("User Information:")
             .setDescription("Here's some information about this user")
-            .addField("Username:", `${user.tag}`);
-        if (member.nickname !== null) embed.addField("Nickname: ", `${member.nickname}`);
-        embed.addFields(
-            { name: "ID:", value: `${user.id}` },
-            { name: "Joined this server:", value: `${formatFullDate(member.joinedAt)}` },
-            { name: "Joined Discord:", value: `${formatFullDate(user.createdAt)}` }
-        );
-
+            .addFields(
+                { name: "Username:", value: `${user.tag}`},
+                { name: "Nickname:", value: `${member.nickname ? member.nickname : "None"}`},
+                { name: "ID:", value: `${user.id}` },
+                { name: "Joined this server:", value: `${formatFullDate(member.joinedAt)}` },
+                { name: "Joined Discord:", value: `${formatFullDate(user.createdAt)}` }
+            );
         await interaction.reply({ embeds: [embed] });
         logEvent(interaction.commandName);
         return;
-
-    },
-
-};
+    }
+}

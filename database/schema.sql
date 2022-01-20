@@ -1,9 +1,9 @@
--- CREATE DATABASE
+-- ! CREATE DATABASE
 
 CREATE DATABASE IF NOT EXISTS infbotutils;
 USE infbotutils;
 
--- CREATE TABLES
+-- ! CREATE TABLES
 
 CREATE TABLE IF NOT EXISTS guilds (
     guildId VARCHAR(32) NOT NULL,
@@ -41,7 +41,7 @@ CREATE TABLE IF NOT EXISTS voiceChannels (
     PRIMARY KEY (id)
 ) ENGINE=INNODB;
 
--- DELETE TABLES
+-- ! DELETE TABLES
 
 DROP TABLE guilds;
 DROP TABLE reactionRoles;
@@ -49,7 +49,7 @@ DROP TABLE utils;
 DROP TABLE voice;
 DROP TABLE voiceChannels;
 
--- DESCRIBE TABLES
+-- ! DESCRIBE TABLES
 
 DESCRIBE guilds;
 DESCRIBE reactionRoles;
