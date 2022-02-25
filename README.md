@@ -25,7 +25,7 @@
   <p>I've intentionally untracked a couple files/folders so I don't lose my mind, but here are the variable names that I used so you can recreate it with your own stuff.</p>
   <p>📁 <em>.env</em> ➡ this file contains a few secrets:</p>
   <ul>
-    <li>TOKEN ➖ Discord Token</li>
+    <li>DISCORD_AUTH_TOKEN ➖ Discord Token</li>
     <li>DATABASE_HOST ➖ Database hostname</li>
     <li>DATABASE_USER ➖ Database username</li>
     <li>DATABASE_PASS ➖ Database password</li>
