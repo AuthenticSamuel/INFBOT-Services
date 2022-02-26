@@ -17,7 +17,7 @@ const client = new Client({
 let connection;
 
 console.log("\n".repeat(10));
-console.log(colors.cyan(`${getDateTime()} >>> Starting INFBOT Services...`));
+console.log(colors.cyan.bold(`${getDateTime()} >>> Starting INFBOT Services...`));
 
 /**
  * ! File verification
@@ -38,7 +38,7 @@ verification.functions();
 	client.voiceConfig = new Collection();
 	client.voiceChannels = [];
 	client.login(process.env.DISCORD_AUTH_TOKEN).catch(error => {
-		console.log(`${colors.red(`\n\n\n${getDateTime()} >>> Couldn't log into Discord. Please check your token in the .env file.`)}\n${error}`);
+		console.log(`${colors.red.bold(`\n\n\n${getDateTime()} >>> Couldn't log into Discord. Please check your token in the .env file.`)}\n${error}`);
 	});
 })();
 

@@ -78,7 +78,7 @@ module.exports = async (client) => {
         console.log(error);
     }
     
-    console.log(`${colors.cyan(`${getDateTime()} >>> INFBOT Services ${colors.white(packageJSON["version"])} Online • ${colors.white(client.guilds.cache.size)} guilds • ${colors.white(totalMembers)} members`)}`);
+    console.log(`${colors.cyan.bold(`${getDateTime()} >>> INFBOT Services ${colors.white(packageJSON["version"])} Online • ${colors.white(client.guilds.cache.size)} guilds • ${colors.white(client.guilds.cache.reduce((a, b) => a.memberCount + b.memberCount))} members`)}`);
     console.table(allGuildInfo, ["Guild_ID", "Guild_Name", "Members"]);
 
     const status = [
