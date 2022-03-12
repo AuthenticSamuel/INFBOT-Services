@@ -1,13 +1,16 @@
-const auditDate = require("../functions/auditDate");
+import { getAuditDate } from "../modules/modules.mjs";
 
 /**
- * ! Handle logs for deleted channels
+ * ! Handle logs for created channels
  */
 
-module.exports = async (channel, client) => {
-	const auditChannelId = client.guildConfig.get(channel.guild.id)[2];
-    if (auditChannelId === "None") return;
+export default async (channel, client) => {
+
+	const auditChannelId = client.guildConfig[channel.guild.id].channels.audit;
+    if (!auditChannelId) return;
+
     try {
+
         const auditChannel = channel.guild.channels.cache.get(auditChannelId);
         const parent = channel.guild.channels.cache.get(channel.parentId);
         const getChannelType = (inputType) => {
@@ -22,7 +25,13 @@ module.exports = async (channel, client) => {
                 default: return "channel";
             }
         }
+        
         const channelType = getChannelType(channel.type);
-        await auditChannel.send("`" + `${auditDate()} >>> Removed ${channelType} '${channel.name}' (ID: ${channel.id})${parent ? ` from category '${parent.name}' (ID: ${parent.id})` : ""}` + "`");
-    } catch {console.error}
+        await auditChannel.send("`" + `${getAuditDate()} >>> Added ${channelType} '${channel.name}' (ID: ${channel.id})${parent ? ` in category '${parent.name}' (ID: ${parent.id})` : ""}` + "`");
+    
+    } catch (error) {
+
+        console.error
+    
+    }
 }

@@ -447,7 +447,7 @@ const DB = {
 
 					}
 				},
-				async set(guildId, channelId, users = null) {
+				async set(guildId, channelId, users = []) {
 					try {
 
 						const voiceChannel = await VoiceChannels.findOne({ channelId });

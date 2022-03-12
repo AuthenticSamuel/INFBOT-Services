@@ -1,9 +1,11 @@
 import dotenv from "dotenv";
-import { Client, Intents, Collection } from "discord.js";
+import { Client, Intents } from "discord.js";
 import chalk from "chalk";
+
 import DB from "./database/db.mjs";
 import { getDateTime, verification } from "./modules/modules.mjs";
 dotenv.config();
+
 const client = new Client({
 	intents: [
 		Intents.FLAGS.GUILDS,
@@ -17,10 +19,10 @@ const client = new Client({
 });
 
 console.log("\n".repeat(10));
-console.log(chalk.cyan.bold(`${getDateTime()} >>> Starting INFBOT Services...`));
+console.log(chalk.cyan(`${getDateTime()} >>> Starting INFBOT Services...`));
 
 /**
- * ! File verification
+ * ! Files
  */
 
 await verification.commands(client);
@@ -44,36 +46,112 @@ verification.events();
  */
 
 client.on("ready", async () => {
-	const { default: ready } = await import("./events/ready.mjs")
-	ready(client);
+	const { default: execute } = await import("./events/ready.mjs");
+	execute(client);
 });
 
 client.on("interactionCreate", async interaction => {
-	const { default: integrationCreate } = await import("./events/interactionCreate.mjs")
-	integrationCreate(client, interaction);
+	const { default: execute } = await import("./events/interactionCreate.mjs");
+	execute(client, interaction);
 });
 
-// client.on("guildCreate", guild => require("./events/guildCreate")(guild, client, connection));
-// client.on("guildDelete", guild => require("./events/guildDelete")(guild, client, connection));
-// client.on("guildMemberAdd", member => require("./events/guildMemberAdd")(member, client));
-// client.on("guildMemberRemove", member => require("./events/guildMemberRemove")(member, client));
-// client.on("guildMemberUpdate", (oldMember, newMember) => require("./events/guildMemberUpdate")(oldMember, newMember, client));
-// client.on("guildBanAdd", ban => require("./events/guildBanAdd")(ban, client));
-// client.on("guildBanRemove", ban => require("./events/guildBanRemove")(ban, client));
-// client.on("channelCreate", channel => require("./events/channelCreate")(channel, client));
-// client.on("channelDelete", channel => require("./events/channelDelete")(channel, client));
-// // client.on("channelUpdate", (oldChannel, newChannel) => require("./events/channelUpdate")(oldChannel, newChannel, client));
-// client.on("emojiCreate", emoji => require("./events/emojiCreate")(emoji, client));
-// client.on("emojiDelete", emoji => require("./events/emojiDelete")(emoji, client)); 
-// client.on("emojiUpdate", (oldEmoji, newEmoji) => require("./events/emojiUpdate")(oldEmoji, newEmoji, client));
-// client.on("stickerCreate", sticker => require("./events/stickerCreate")(sticker, client));
-// client.on("stickerDelete", sticker => require("./events/stickerDelete")(sticker, client));
-// client.on("stickerUpdate", (oldSticker, newSticker) => require("./events/stickerUpdate")(oldSticker, newSticker, client));
-// client.on("roleCreate", role => require("./events/roleCreate")(role, client));
-// client.on("roleDelete", role => require("./events/roleDelete")(role, client));
-// client.on("roleUpdate", (oldRole, newRole) => require("./events/roleUpdate")(oldRole, newRole, client));
+client.on("guildCreate", async guild => {
+	const { default: execute } = await import("./events/guildCreate.mjs");
+	execute(guild, client);
+});
+
+client.on("guildDelete", async guild => {
+	const { default: execute } = await import("./events/guildDelete.mjs");
+	execute(guild, client);
+});
+
+client.on("guildMemberAdd", async member => {
+	const { default: execute } = await import("./events/guildMemberAdd.mjs");
+	execute(member, client);
+});
+
+client.on("guildMemberRemove", async member => {
+	const { default: execute } = await import("./events/guildMemberRemove.mjs");
+	execute(member, client);
+});
+
+client.on("guildMemberUpdate", async (oldMember, newMember) => {
+	const { default: execute } = await import("./events/guildMemberUpdate.mjs");
+	execute(oldMember, newMember, client);
+});
+
+client.on("guildBanAdd", async ban => {
+	const { default: execute } = await import("./events/guildBanAdd.mjs");
+	execute(ban, client);
+});
+
+client.on("guildBanRemove", async ban => {
+	const { default: execute } = await import("./events/guildBanRemove.mjs");
+	execute(ban, client);
+});
+
+client.on("channelCreate", async channel => {
+	const { default: execute } = await import("./events/channelCreate.mjs");
+	execute(channel, client);
+});
+
+client.on("channelDelete", async channel => {
+	const { default: execute } = await import("./events/channelDelete.mjs");
+	execute(channel, client);
+});
+
+// TODO: Causing bugs ATM
+// client.on("channelUpdate", async channel => {
+// 	const { default: execute } = await import("./events/channelUpdate.mjs");
+// 	execute(channel, client);
+// });
+
+client.on("emojiCreate", async emoji => {
+	const { default: execute } = await import("./events/emojiCreate.mjs");
+	execute(emoji, client);
+});
+
+client.on("emojiDelete", async emoji => {
+	const { default: execute } = await import("./events/emojiDelete.mjs");
+	execute(emoji, client);
+});
+
+client.on("emojiUpdate", async (oldEmoji, newEmoji) => {
+	const { default: execute } = await import("./events/emojiUpdate.mjs");
+	execute(oldEmoji, newEmoji, client);
+});
+
+client.on("stickerCreate", async sticker => {
+	const { default: execute } = await import("./events/stickerCreate.mjs");
+	execute(sticker, client);
+});
+
+client.on("stickerDelete", async sticker => {
+	const { default: execute } = await import("./events/stickerDelete.mjs");
+	execute(sticker, client);
+});
+
+client.on("stickerUpdate", async (oldSticker, newSticker) => {
+	const { default: execute } = await import("./events/stickerUpdate.mjs");
+	execute(oldSticker, newSticker, client);
+});
+
+client.on("roleCreate", async role => {
+	const { default: execute } = await import("./events/roleCreate.mjs");
+	execute(role, client);
+});
+
+client.on("roleDelete", async role => {
+	const { default: execute } = await import("./events/roleDelete.mjs");
+	execute(role, client);
+});
+
+client.on("roleUpdate", async (oldRole, newRole) => {
+	const { default: execute } = await import("./events/roleUpdate.mjs");
+	execute(oldRole, newRole, client);
+});
 
 client.on("voiceStateUpdate", async (oldState, newState) => { // ! INFBOT Voice Channels
-	const { default: voiceStateUpdate } = await import("./events/voiceStateUpdate.mjs")
+	const { default: voiceStateUpdate } = await import("./events/voiceStateUpdate.mjs");
 	voiceStateUpdate(oldState, newState, client);
 });

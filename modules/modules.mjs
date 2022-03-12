@@ -84,7 +84,7 @@ export const verification = {
     },
     events: () => {
         console.log(chalk.cyan(`${getDateTime()} >>> Events:`));
-        const eventFiles = fs.readdirSync("./events").filter(file => file.endsWith(".js"));
+        const eventFiles = fs.readdirSync("./events").filter(file => file.endsWith(".mjs"));
         for (const file of eventFiles) {
             console.log(`${chalk.cyan(`${getDateTime()} >>>   `)}${file}`);
         };

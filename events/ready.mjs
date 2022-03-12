@@ -9,7 +9,7 @@ import {config, packageJSON, getDateTime } from "../modules/modules.mjs";
  * ! Stuff for when the bot is online and ready
  */
 
-const ready = async client => {
+export default async client => {
     const commands = client.commandsArray;
     let totalMembers = 0;
     let allGuildInfo = [];
@@ -83,5 +83,3 @@ const ready = async client => {
 
     }, config.DELAY.STATUS)
 }
-
-export default ready;

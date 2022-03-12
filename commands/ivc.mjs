@@ -282,8 +282,8 @@ export default {
 					},
 				);
 
-				await DB.voiceChannels.settings.invitedUsers.get(guild.id, channel.id).then(async (success, response) => {
-					for (const userId of response) {
+				await DB.voiceChannels.settings.invitedUsers.get(guild.id, channel.id).then(async data => {
+					for (const userId of data.response) {
 						await channel.permissionOverwrites.edit(
 							userId, {
 								CONNECT: null,
