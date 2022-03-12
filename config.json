@@ -17,8 +17,8 @@
 	},
 	"guildId": 328486960664412160,
 	"PATCH": {
-		"DATE": "21/01/2022 - 00:00",
-		"NOTES": "Restarting development. Keep up to date on GitHub!"
+		"DATE": "12/03/2022 - 23:00",
+		"NOTES": "Converted everything to use ES6 (most) and MongoDB!"
 	},
 	"CODE": "https://github.com/INF-Zenyth/INFBOT-Services",
 	"DEVELOPER_DISCORD_SERVER": "https://discord.gg/team-infernal",

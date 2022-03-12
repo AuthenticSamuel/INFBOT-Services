@@ -4,6 +4,7 @@ import { readFile } from "fs/promises";
 import chalk from "chalk";
 
 export const config = JSON.parse(await readFile("./config.json"));
+
 export const packageJSON = JSON.parse(await readFile("./package.json"));
 
 export const capitalizeFirstLetter = string => string[0].toUpperCase() + string.slice(1);
