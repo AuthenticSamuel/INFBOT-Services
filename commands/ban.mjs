@@ -1,9 +1,10 @@
-const { SlashCommandBuilder } = require("@discordjs/builders");
-const { Permissions, MessageEmbed, MessageActionRow, MessageButton } = require("discord.js");
-const logEvent = require("../functions/logEvent");
-const config = require("../config.json");
+import { SlashCommandBuilder } from "@discordjs/builders";
+import { Permissions, MessageEmbed, MessageActionRow, MessageButton } from "discord.js";
 
-module.exports = {
+import config from "../config.js";
+import { logEvent } from "../modules/modules.mjs";
+
+const command = {
 	data: new SlashCommandBuilder()
 		.setName("ban")
 		.setDescription("Ban a user")
@@ -15,6 +16,7 @@ module.exports = {
 			.setName("reason")
 			.setDescription("Reason (optional)")
 			.setRequired(false))
+			
 	, async execute(interaction) {
 
 		const client = interaction.client;
@@ -138,6 +140,7 @@ module.exports = {
 				});
 			}
 		});
-
 	}
 }
+
+export default command;

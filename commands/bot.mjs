@@ -1,15 +1,18 @@
-const { SlashCommandBuilder } = require("@discordjs/builders");
-const { MessageEmbed } = require("discord.js");
-const config = require("../config.json");
-const logEvent = require("../functions/logEvent");
-const leadingZeroes = require("../functions/leadingZeroes");
-const packageJSON = require("../package.json");
+import { SlashCommandBuilder } from "@discordjs/builders";
+import { MessageEmbed } from "discord.js";
+import { readFile } from "fs/promises";
 
-module.exports = {
+import config from "../config.js";
+import { logEvent, leadingZeroes } from "../modules/modules.mjs";
+const packageJSON = JSON.parse(await readFile("./package.json"));
+
+const command = {
     data: new SlashCommandBuilder()
         .setName("bot")
         .setDescription("Get INFBOT information")
+        
     , async execute(interaction) {
+
         const client = interaction.client;
         let totalSeconds = (client.uptime / 1000);
         const totalDays = Math.floor(totalSeconds / 86400);
@@ -45,3 +48,5 @@ module.exports = {
         return;
     }
 }
+
+export default command;

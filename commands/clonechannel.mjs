@@ -1,17 +1,18 @@
-const { SlashCommandBuilder } = require("@discordjs/builders");
-const { Permissions, MessageEmbed } = require("discord.js");
-const config = require("../config.json");
+import { SlashCommandBuilder } from "@discordjs/builders";
+import { Permissions, MessageEmbed } from "discord.js";
+import config from "../config.js";
 
-module.exports = {
+const command = {
     data: new SlashCommandBuilder()
         .setName("clonechannel")
         .setDescription("Clones the current channel (w/o messages).")
         .addStringOption(option => option
             .setName("reason")
             .setDescription("Reason (optional)")
-            .setRequired(false)
-        ),
-    async execute(interaction) {
+            .setRequired(false))
+
+    , async execute(interaction) {
+
         if (!interaction.member.permissions.has(Permissions.FLAGS.ADMINISTRATOR)) {
             const embed = new MessageEmbed()
                 .setColor(config.COLOR.WARNING)
@@ -36,3 +37,5 @@ module.exports = {
         return await interaction.reply({ embeds: [embed] });
     }
 }
+
+export default command;

@@ -1,19 +1,21 @@
-const { SlashCommandBuilder } = require("@discordjs/builders");
-const { MessageEmbed } = require("discord.js");
-const config = require("../config.json");
-const formatFullDate = require("../functions/formatFullDate");
-const logEvent = require("../functions/logEvent");
+import { SlashCommandBuilder } from "@discordjs/builders";
+import { MessageEmbed } from "discord.js";
+
+import config from "../config.js";
+import { formatFullDate, logEvent } from "../modules/modules.mjs";
 
 /**
  * ! SERVER command
  * ! Gives the initial user relevant information about the server
  */
 
-module.exports = {
+const command = {
     data: new SlashCommandBuilder()
         .setName("server")
         .setDescription("Get server information")
+        
     , async execute(interaction) {
+
         const guild = interaction.guild;
         const guildOwner = guild.members.cache.get(guild.ownerId)
         let embed = new MessageEmbed()
@@ -31,3 +33,5 @@ module.exports = {
         return;
     }
 }
+
+export default command;

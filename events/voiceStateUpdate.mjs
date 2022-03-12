@@ -1,30 +1,31 @@
-const logVoice = require("../functions/logVoice");
+import { newVoiceChannel, delVoiceChannel } from "../database/db.mjs";
+import { logVoice } from "../modules/modules.mjs";
 
 /**
  * ! Methods to create and delete channels
  */
 
-module.exports = async (oldState, newState, client) => {
+const voiceStateUpdate = async (oldState, newState, client) => {
     if (newState.channelId === oldState.channelId) return;
-    const connection = client.connection;
-    const { channelCreator, channelCreatorCategory } = client.voiceConfig.get(newState.guild.id);
 
-    if (newState.channelId === channelCreator) {
+    const { channel, category } = client.guildConfig[newState.guild.id].integrations.voice;
+
+    if (newState.channelId === channel) {
         try {
             logVoice("creating");
             await newState.guild.channels.create(
                 newState.member.user.username,
                 {
                     type: "GUILD_VOICE",
-                    parent: channelCreatorCategory,
+                    parent: category,
                 }
             ).then(async channel => {
                 newState.member.voice.setChannel(channel.id);
                 client.voiceChannels.push(channel.id);
-                await connection.query(`INSERT INTO voiceChannels (guildId, channelId) VALUES ('${newState.guild.id}', '${channel.id}')`);
+                newVoiceChannel(newState.guild.id, channel.id);
+                logVoice("created");
             });
-            logVoice("created");
-        } catch {console.error}
+        } catch { console.error }
     }
 
     const autoChannels = client.voiceChannels;
@@ -37,10 +38,12 @@ module.exports = async (oldState, newState, client) => {
                     logVoice("deleting");
                     autoChannel.delete();
                     client.voiceChannels = client.voiceChannels.filter(channel => channel !== autoChannel.id);
-                    await connection.query(`DELETE FROM voiceChannels WHERE channelId = '${autoChannel.id}'`);
+                    delVoiceChannel(oldState.guild.id, autoChannel.id);
                     logVoice("deleted");
-                } catch {console.error}
+                } catch { console.error }
             }
         }
     }
 }
+
+export default voiceStateUpdate;

@@ -1,15 +1,15 @@
-const { SlashCommandBuilder } = require("@discordjs/builders");
-const { MessageEmbed } = require("discord.js");
-const config = require("../config.json");
-const formatFullDate = require("../functions/formatFullDate");
-const logEvent = require("../functions/logEvent");
+import { SlashCommandBuilder } from "@discordjs/builders";
+import { MessageEmbed } from "discord.js";
+
+import config from "../config.js";
+import { formatFullDate, logEvent } from "../modules/modules.mjs";
 
 /**
  * ! USER command
  * ! Gives the initial user relevant information about the target user
  */
 
-module.exports = {
+const command = {
     data: new SlashCommandBuilder()
         .setName("user")
         .setDescription("Get user information")
@@ -17,7 +17,9 @@ module.exports = {
             .setName("target")
             .setDescription("User you want information on")
             .setRequired(true))
+
     , async execute(interaction) {
+        
         const user = interaction.options.getUser("target");
         const member = await interaction.guild.members.cache.get(user.id);
         const embed = new MessageEmbed()
@@ -37,3 +39,5 @@ module.exports = {
         return;
     }
 }
+
+export default command;

@@ -1,4 +1,4 @@
-{
+const config = {
 	"AUTO_VC": {
 		"CHANNEL_NAME": "➕ New Channel",
 		"CATEGORY_NAME": "INFBOT Voice Channels test"
@@ -24,3 +24,5 @@
 	"DEVELOPER_DISCORD_SERVER": "https://discord.gg/team-infernal",
 	"SUPPORT_DISCORD_SERVER": "https://discord.gg/team-infernal"
 }
+
+export default config;

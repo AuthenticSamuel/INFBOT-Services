@@ -1,14 +1,15 @@
-const { SlashCommandBuilder } = require("@discordjs/builders");
-const { MessageEmbed } = require("discord.js");
-const config = require("../config.json");
-const logEvent = require("../functions/logEvent");
-const capitalizeFirstLetter = require("../functions/capitalizeFirstLetter");
+import { SlashCommandBuilder } from "@discordjs/builders";
+import { MessageEmbed } from "discord.js";
+
+import config from "../config.js";
+import { delVoiceChannel, fetchVoiceChannelInfo, updateGuild, updateVoiceChannel } from "../database/db.mjs";
+import { logEvent, capitalizeFirstLetter } from "../modules/modules.mjs";
 
 /**
  * ! Handle INFBOT VOICE CHANNELS (IVC) commands
  */
 
-module.exports = {
+const command = {
 	data: new SlashCommandBuilder()
 		.setName("ivc")
 		.setDescription("Commands for INFBOT Voice Channels")
@@ -48,9 +49,10 @@ module.exports = {
 				.setName("user")
 				.setDescription("User to invite")
 				.setRequired(true)))
+
 	, async execute(interaction) {
+
 		const client = interaction.client;
-		const connection = client.connection;
 		const guild = interaction.guild;
 		const member = interaction.member;
 		const command = interaction.commandName;
@@ -62,15 +64,15 @@ module.exports = {
 			const option = interaction.options.getString("type")
 
 			if (option === "ivca") {
-				const { channelCreator, channelCreatorCategory } = client.voiceConfig.get(guild.id);
-				if (channelCreator !== "None" && channelCreatorCategory !== "None") {
+				const { channel, category } = client.guildConfig[guild.id].integrations.voice;
+				if (channel !== null && category !== null) {
 					const ivcaEmbed = new MessageEmbed()
 						.setTitle("INFBOT Voice Channels (IVCs) are up and running!")
 						.setColor(config.COLOR.EVENT);
 					await interaction.reply({ embeds: [ivcaEmbed] });
 					logEvent(csc, "SUCCESS: ACTIVE");
 					return;
-				} else if (channelCreator === "None" && channelCreatorCategory === "None") {
+				} else if (channel === null && category === null) {
 					const ivcaEmbed = new MessageEmbed()
 						.setTitle("INFBOT Voice Channels (IVCs) aren't running on this server.")
 						.setDescription("If you're an admin, use `/integrations autovoicechannels` to initialize INFBOT Voice Channels.")
@@ -79,12 +81,18 @@ module.exports = {
 					logEvent(csc, "SUCCESS: INACTIVE");
 					return;
 				} else {
-					await connection.query(`UPDATE voice SET channelCreator = 'None', channelCreatorCategory = 'None' WHERE guildId = '${guild.id}'`);
-					await connection.query(`DELETE FROM voiceChannels WHERE guildId = '${guild.id}'`);
-					client.voiceConfig.set(guild.id, {
-						channelCreator: "None",
-						channelCreatorCategory: "None",
+					await updateGuild(guild.id, {
+						integrations: {
+							voice: {
+								channel: null,
+								category: null,
+							},
+						},
 					});
+					delVoiceChannel(guild.id);
+					client.guildConfig[guild.id].integrations.voice.channel = null;
+					client.guildConfig[guild.id].integrations.voice.category = null;
+
 					const ivcaEmbed = new MessageEmbed()
 						.setTitle("I've found an issue with your setup...")
 						.setDescription("It seems that INFBOT Voice Channels were partially setup on this server. This shouldn't happen. We've reset the setup process, therefore, please use `/config autovoicechannels` to re-initialize INFBOT Voice Channels.")
@@ -221,7 +229,9 @@ module.exports = {
 						},
 					);
 				}
-				await connection.query(`UPDATE voicechannels SET invitedUsersId = '${users.join(",")}' WHERE channelId = '${channel.id}'`);
+				await updateVoiceChannel(guild.id, channel.id, {
+					invitedUsers: users,
+				});
 				const lockEmbed = new MessageEmbed()
 					.setTitle("You've successfully locked your channel.")
 					.setDescription(`Use \`/ivc lock false\` to unlock it.`)
@@ -236,19 +246,19 @@ module.exports = {
 						CONNECT: true,
 					},
 				);
-				await connection.query(`SELECT invitedUsersId FROM voicechannels WHERE channelId = '${channel.id}'`).then(async result => {
-					if (result[0][0].invitedUsersId !== null) {
-						const users = [...result[0][0].invitedUsersId.split(",")];
-						for (const userId of users) {
-							await channel.permissionOverwrites.edit(
-								userId, {
-									CONNECT: null,
-								},
-							);
-						}
-						connection.query(`UPDATE voicechannels SET invitedUsersId = NULL WHERE channelId = '${channel.id}'`);
+				await fetchVoiceChannelInfo(guild.id, channel.id).then(async voiceChannel => {
+					for (const userId of voiceChannel.invitedUsers) {
+						await channel.permissionOverwrites.edit(
+							userId, {
+								CONNECT: null,
+							},
+						);
 					}
 				});
+				await updateVoiceChannel(guild.id, channel.id, {
+					invitedUsers: [],
+				});
+
 				const lockEmbed = new MessageEmbed()
 					.setTitle("You've successfully unlocked your channel.")
 					.setColor(config.COLOR.EVENT);
@@ -268,8 +278,8 @@ module.exports = {
 			// logEvent(csc, "SUCCESS");
 			// return;
 
-			console.log(member.presences)
-
 		} */
 	}
 }
+
+export default command;
