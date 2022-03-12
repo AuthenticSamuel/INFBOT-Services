@@ -1,15 +1,14 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { MessageEmbed } from "discord.js";
 
-import config from "../config.js";
-import { formatFullDate, logEvent } from "../modules/modules.mjs";
+import { config, formatFullDate, logEvent } from "../modules/modules.mjs";
 
 /**
  * ! USER command
  * ! Gives the initial user relevant information about the target user
  */
 
-const command = {
+export default {
     data: new SlashCommandBuilder()
         .setName("user")
         .setDescription("Get user information")
@@ -39,5 +38,3 @@ const command = {
         return;
     }
 }
-
-export default command;

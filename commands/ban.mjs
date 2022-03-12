@@ -1,10 +1,9 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { Permissions, MessageEmbed, MessageActionRow, MessageButton } from "discord.js";
 
-import config from "../config.js";
-import { logEvent } from "../modules/modules.mjs";
+import { config, logEvent } from "../modules/modules.mjs";
 
-const command = {
+export default {
 	data: new SlashCommandBuilder()
 		.setName("ban")
 		.setDescription("Ban a user")
@@ -142,5 +141,3 @@ const command = {
 		});
 	}
 }
-
-export default command;

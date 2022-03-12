@@ -1,4 +1,4 @@
-import { newVoiceChannel, delVoiceChannel } from "../database/db.mjs";
+import DB from "../database/db.mjs";
 import { logVoice } from "../modules/modules.mjs";
 
 /**
@@ -6,12 +6,14 @@ import { logVoice } from "../modules/modules.mjs";
  */
 
 const voiceStateUpdate = async (oldState, newState, client) => {
-    if (newState.channelId === oldState.channelId) return;
 
-    const { channel, category } = client.guildConfig[newState.guild.id].integrations.voice;
+    if (newState.channelId === oldState.channelId) return;
+    
+    const { channel, category } = client.guildConfig[newState.guild.id].voice;
 
     if (newState.channelId === channel) {
         try {
+
             logVoice("creating");
             await newState.guild.channels.create(
                 newState.member.user.username,
@@ -20,27 +22,43 @@ const voiceStateUpdate = async (oldState, newState, client) => {
                     parent: category,
                 }
             ).then(async channel => {
+
                 newState.member.voice.setChannel(channel.id);
                 client.voiceChannels.push(channel.id);
-                newVoiceChannel(newState.guild.id, channel.id);
+                await DB.voiceChannels.add(newState.guild.id, channel.id);
                 logVoice("created");
+
             });
-        } catch { console.error }
+
+        } catch (error) {
+
+            console.warn(error);
+        
+        }
     }
 
     const autoChannels = client.voiceChannels;
 
     for (const autoChannelId of autoChannels) {
+
         if (oldState.channelId === autoChannelId) {
+
             const autoChannel = oldState.guild.channels.cache.get(autoChannelId);
+
             if (autoChannel.members.size < 1) {
                 try {
+
                     logVoice("deleting");
                     autoChannel.delete();
                     client.voiceChannels = client.voiceChannels.filter(channel => channel !== autoChannel.id);
-                    delVoiceChannel(oldState.guild.id, autoChannel.id);
+                    await DB.voiceChannels.delete(oldState.guild.id, autoChannel.id);
                     logVoice("deleted");
-                } catch { console.error }
+
+                } catch (error) {
+                    
+                    console.warn(error);
+                
+                }
             }
         }
     }

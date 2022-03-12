@@ -1,11 +1,12 @@
 import { MessageEmbed, Collection } from "discord.js";
 import fs from "fs";
+import { readFile } from "fs/promises";
 import chalk from "chalk";
-import config from "../config.js";
 
-export const capitalizeFirstLetter = string => {
-	return string[0].toUpperCase() + string.slice(1);
-}
+export const config = JSON.parse(await readFile("./config.json"));
+export const packageJSON = JSON.parse(await readFile("./package.json"));
+
+export const capitalizeFirstLetter = string => string[0].toUpperCase() + string.slice(1);
 
 export const createEmbedError = (title = "Error", desc = "We've encountered an error.") => {
 	const embed = new MessageEmbed()
@@ -45,9 +46,7 @@ export const getDateTime = () => {
 	return `${getDate.toLocaleString()}`;
 }
 
-export const leadingZeroes = value => {
-	return value.toString().length < 2 ? `0${value}` : `${value}`;
-}
+export const leadingZeroes = value => value.toString().length < 2 ? `0${value}` : `${value}`;
 
 export const logEvent = (command, result = "") => {
 	if (result.startsWith("SUCCESS")) result = `[${chalk.green(result)}]`;

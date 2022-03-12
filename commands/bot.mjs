@@ -1,12 +1,9 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { MessageEmbed } from "discord.js";
-import { readFile } from "fs/promises";
 
-import config from "../config.js";
-import { logEvent, leadingZeroes } from "../modules/modules.mjs";
-const packageJSON = JSON.parse(await readFile("./package.json"));
+import { config, packageJSON, logEvent, leadingZeroes } from "../modules/modules.mjs";
 
-const command = {
+export default {
     data: new SlashCommandBuilder()
         .setName("bot")
         .setDescription("Get INFBOT information")
@@ -48,5 +45,3 @@ const command = {
         return;
     }
 }
-
-export default command;

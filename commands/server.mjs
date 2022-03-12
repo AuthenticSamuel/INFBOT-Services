@@ -1,15 +1,14 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { MessageEmbed } from "discord.js";
 
-import config from "../config.js";
-import { formatFullDate, logEvent } from "../modules/modules.mjs";
+import { config, formatFullDate, logEvent } from "../modules/modules.mjs";
 
 /**
  * ! SERVER command
  * ! Gives the initial user relevant information about the server
  */
 
-const command = {
+export default {
     data: new SlashCommandBuilder()
         .setName("server")
         .setDescription("Get server information")
@@ -33,5 +32,3 @@ const command = {
         return;
     }
 }
-
-export default command;

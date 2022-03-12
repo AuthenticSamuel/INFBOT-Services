@@ -1,6 +1,6 @@
 {
   "name": "infbot-utilities",
-  "version": "1.0.2",
+  "version": "1.2.0",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -9,7 +9,7 @@
   },
   "type": "module",
   "keywords": [],
-  "author": "",
+  "author": "Samuel Ward",
   "license": "MIT",
   "dependencies": {
     "@discordjs/builders": "^0.6.0",

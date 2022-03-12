@@ -1,8 +1,9 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { Permissions, MessageEmbed } from "discord.js";
-import config from "../config.js";
 
-const command = {
+import { config } from "../modules/modules.mjs";
+
+export default {
     data: new SlashCommandBuilder()
         .setName("clonechannel")
         .setDescription("Clones the current channel (w/o messages).")
@@ -37,5 +38,3 @@ const command = {
         return await interaction.reply({ embeds: [embed] });
     }
 }
-
-export default command;

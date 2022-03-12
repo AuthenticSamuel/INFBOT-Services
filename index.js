@@ -1,7 +1,7 @@
 import dotenv from "dotenv";
 import { Client, Intents, Collection } from "discord.js";
 import chalk from "chalk";
-import { connection } from "./database/db.mjs";
+import DB from "./database/db.mjs";
 import { getDateTime, verification } from "./modules/modules.mjs";
 dotenv.config();
 const client = new Client({
@@ -31,7 +31,7 @@ verification.events();
  */
 
 (async () => {
-	client.connection = connection;
+	DB.connect();
 	client.guildConfig = {};
 	client.voiceChannels = [];
 	client.login(process.env.DISCORD_AUTH_TOKEN).catch(error => {
@@ -47,10 +47,12 @@ client.on("ready", async () => {
 	const { default: ready } = await import("./events/ready.mjs")
 	ready(client);
 });
+
 client.on("interactionCreate", async interaction => {
 	const { default: integrationCreate } = await import("./events/interactionCreate.mjs")
 	integrationCreate(client, interaction);
 });
+
 // client.on("guildCreate", guild => require("./events/guildCreate")(guild, client, connection));
 // client.on("guildDelete", guild => require("./events/guildDelete")(guild, client, connection));
 // client.on("guildMemberAdd", member => require("./events/guildMemberAdd")(member, client));
@@ -70,6 +72,7 @@ client.on("interactionCreate", async interaction => {
 // client.on("roleCreate", role => require("./events/roleCreate")(role, client));
 // client.on("roleDelete", role => require("./events/roleDelete")(role, client));
 // client.on("roleUpdate", (oldRole, newRole) => require("./events/roleUpdate")(oldRole, newRole, client));
+
 client.on("voiceStateUpdate", async (oldState, newState) => { // ! INFBOT Voice Channels
 	const { default: voiceStateUpdate } = await import("./events/voiceStateUpdate.mjs")
 	voiceStateUpdate(oldState, newState, client);
