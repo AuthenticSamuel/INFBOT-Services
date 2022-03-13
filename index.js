@@ -33,6 +33,7 @@ verification.events();
  */
 
 (async () => {
+	DB.disconnect();
 	DB.connect();
 	client.guildConfig = {};
 	client.voiceChannels = [];

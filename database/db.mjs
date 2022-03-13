@@ -67,8 +67,15 @@ const DB = {
 	connect() {
 		mongoose.connect(
 			process.env.MONGODB_URI,
+			{
+				useNewUrlParser: true,
+				useUnifiedTopology: true,
+			},
 			err => err ? console.error(err) : console.log(chalk.cyan.bold(`${getDateTime()} >>> MongoDB: Successfully connected to database!`)),
 		);
+	},
+	async disconnect() {
+		await mongoose.disconnect().then(() => console.log(chalk.cyan.bold(`${getDateTime()} >>> MongoDB: Disconnected.`)));
 	},
 	guilds: {
 		async add(guildId) {
