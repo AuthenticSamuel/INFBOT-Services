@@ -152,6 +152,6 @@ client.on("roleUpdate", async (oldRole, newRole) => {
 });
 
 client.on("voiceStateUpdate", async (oldState, newState) => { // ! INFBOT Voice Channels
-	const { default: voiceStateUpdate } = await import("./events/voiceStateUpdate.mjs");
-	voiceStateUpdate(oldState, newState, client);
+	const { default: execute } = await import("./events/voiceStateUpdate.mjs");
+	execute(oldState, newState, client);
 });
