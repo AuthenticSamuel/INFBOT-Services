@@ -130,7 +130,7 @@ export default {
 
             const role = interaction.options.getRole("role");
 
-            await DB.guilds.integrations.roles.newMember.set(guild.id, roles.id);
+            await DB.guilds.integrations.roles.newMember.set(guild.id, role.id);
             interaction.client.guildConfig[interaction.guild.id].roles.newMember = role.id;
 
             const joinRoleEmbed = new MessageEmbed()
