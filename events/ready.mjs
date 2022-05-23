@@ -41,8 +41,9 @@ export default async client => {
 
     try {
 
-        if (!config.guildId) await rest.put(Routes.applicationGuildCommands(client.user.id), { body: commands },);
-        else await rest.put(Routes.applicationGuildCommands(client.user.id, config.guildId), { body: commands },);
+        // if (!config.guildId)
+        await rest.put(Routes.applicationGuildCommands(client.user.id), { body: commands },);
+        // else await rest.put(Routes.applicationGuildCommands(client.user.id, config.guildId), { body: commands },);
         console.log(`${chalk.cyan(`${getDateTime()} >>> Slash commands have been registered`)}`);
 
     } catch (error) {
@@ -62,7 +63,7 @@ export default async client => {
         });
 
     });
-    
+
     console.log(`${chalk.cyan(`${getDateTime()} >>> Database fetch successful`)}`);
 
     console.log(`${chalk.cyan(`${getDateTime()} >>> INFBOT Services ${chalk.white(packageJSON["version"])} Online • ${chalk.white(client.guilds.cache.size)} guilds • ${chalk.white(client.guilds.cache.reduce((a, b) => a.memberCount + b.memberCount))} members`)}`);
