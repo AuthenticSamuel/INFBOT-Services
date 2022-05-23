@@ -15,7 +15,7 @@
 		"NITRO": "F47FFF",
 		"INPUT": "B600FF"
 	},
-	"guildId": 328486960664412160,
+	"guildId": "",
 	"PATCH": {
 		"DATE": "12/03/2022 - 23:00",
 		"NOTES": "Converted everything to use ES6 (most) and MongoDB!"
