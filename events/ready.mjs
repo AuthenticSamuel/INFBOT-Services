@@ -42,7 +42,7 @@ export default async client => {
     try {
 
         // if (!config.guildId)
-        await rest.put(Routes.applicationGuildCommands(client.user.id), { body: commands },);
+        await rest.put(Routes.applicationCommands(client.user.id), { body: commands },);
         // else await rest.put(Routes.applicationGuildCommands(client.user.id, config.guildId), { body: commands },);
         console.log(`${chalk.cyan(`${getDateTime()} >>> Slash commands have been registered`)}`);
 
